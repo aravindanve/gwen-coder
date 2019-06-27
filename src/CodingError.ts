@@ -4,15 +4,17 @@ export type CodingErrorContext = {
 }
 
 export class CodingError extends Error {
-  protected trace: CodingErrorContext[] = []
+  readonly trace: CodingErrorContext[] = []
 
   protected constructor(ctx?: CodingErrorContext, message?: string) {
     super(message)
     ctx && this.trace.push(ctx)
   }
 
-  getPath() { return '' } // FIXME
-  getTrace() { return {} } // FIXME
+  // FIXME: escape characters / and ~ in json pointer
+  get path() {
+    return '#/' + this.trace.map(ctx => ctx.key).reverse().join('/')
+  }
 
   static new(message?: string, ctx?: CodingErrorContext) {
     return new this(ctx, message)
