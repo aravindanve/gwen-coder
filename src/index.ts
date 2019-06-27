@@ -1,3 +1,9 @@
 export * from './Coder'
+export * from './CodingError'
 export * from './bundled'
-export * from './api'
+export {
+  Strainer,
+  Decoder,
+  Encoder,
+  Coder
+} from './grammar'

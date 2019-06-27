@@ -1,24 +1,32 @@
-/** Decodes type T <- S */
-export interface Decoder<T, S> {
-  decode(value: S): T | Promise<T>
+/** Strainer Interface */
+export interface Strainer<D, E> {
+  asDecodeType(value: D): D | Promise<D>
+  asEncodeType(value: E): E | Promise<E>
 }
 
-/** Encodes type T -> S */
-export interface Encoder<T, S> {
-  encode(value: T): S | Promise<S>
+/** Decoder Interface */
+export interface Decoder<D, E> extends Strainer<D, E> {
+  decode(value: E): D | Promise<D>
 }
 
-/** Decodes type T <- S and Encodes type T -> S  */
+/** Encoder Interface */
+export interface Encoder<D, E> extends Strainer<D, E> {
+  encode(value: D): E | Promise<E>
+}
+
+/** Decoder and Encoder Interface  */
 export interface Coder<T, S> extends Decoder<T, S>, Encoder<T, S> { }
 
-/** Target Type of Coder, Decoder, Encoder */
-export type TargetType<C> =
-  C extends Coder<infer T, any> ? T :
-  C extends Decoder<infer T, any> ? T :
-  C extends Encoder<infer T, any> ? T : never
+/** Extracts Decode Type */
+export type DecodeType<T> =
+  T extends Coder<infer D, any> ? D :
+  T extends Decoder<infer D, any> ? D :
+  T extends Encoder<infer D, any> ? D :
+  T extends Strainer<infer D, any> ? D : never
 
-/** Source Type of Coder, Decoder, Encoder */
-export type SourceType<C> =
-  C extends Coder<any, infer T> ? T :
-  C extends Decoder<any, infer T> ? T :
-  C extends Encoder<any, infer T> ? T : never
+/** Extracts Encode Type */
+export type EncodeType<T> =
+  T extends Coder<any, infer E> ? E :
+  T extends Decoder<any, infer E> ? E :
+  T extends Encoder<any, infer E> ? E :
+  T extends Strainer<any, infer E> ? E : never
