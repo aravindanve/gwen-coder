@@ -1,0 +1,30 @@
+{
+  "name": "type-coder",
+  "version": "0.0.1",
+  "description": "Strongly typed value encoder and decoder with runtime type checking. Inspired by Swift's Codable",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aravindanve/type-coder.git"
+  },
+  "keywords": [
+    "json",
+    "validator",
+    "codable",
+    "type-checking",
+    "type-guard"
+  ],
+  "author": "Aravindan Ve <aravindan.ve@outlook.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/aravindanve/type-coder/issues"
+  },
+  "homepage": "https://github.com/aravindanve/type-coder#readme"
+}
