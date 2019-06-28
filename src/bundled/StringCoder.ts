@@ -1,7 +1,7 @@
 import { Strainer, Decoder, Encoder, Coder } from '../Coder'
 import { CodingError } from '../CodingError'
 
-/* Runtime cast to string type */
+/** Runtime cast to string type */
 export function asStringType(value: string): string {
   switch (typeof value) {
     case 'string':
@@ -14,30 +14,30 @@ export function asStringType(value: string): string {
   throw CodingError.new(`Could not convert value ${value} to string`)
 }
 
-/* String Strainer Factory */
+/** String Strainer Factory */
 export const StringStrainer = (): Strainer<string, string> => ({
   asDecodeType: asStringType,
   asEncodeType: asStringType
 })
 
-/* String Decoder Factory */
+/** String Decoder Factory */
 export const StringDecoder = (): Decoder<string, string> => ({
-  ...StringStrainer(),
-  decode(value) {
-    return this.asDecodeType(value)
-  }
+  asDecodeType: asStringType,
+  asEncodeType: asStringType,
+  decode: asStringType
 })
 
-/* String Encoder Factory */
+/** String Encoder Factory */
 export const StringEncoder = (): Encoder<string, string> => ({
-  ...StringStrainer(),
-  encode(value) {
-    return this.asEncodeType(value)
-  }
+  asDecodeType: asStringType,
+  asEncodeType: asStringType,
+  encode: asStringType
 })
 
-/* String Coder Factory */
+/** String Coder Factory */
 export const StringCoder = (): Coder<string, string> => ({
-  ...StringDecoder(),
-  ...StringEncoder()
+  asDecodeType: asStringType,
+  asEncodeType: asStringType,
+  decode: asStringType,
+  encode: asStringType
 })

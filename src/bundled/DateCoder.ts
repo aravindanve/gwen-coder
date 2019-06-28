@@ -1,7 +1,7 @@
 import { Strainer, Decoder, Encoder, Coder } from '../Coder'
 import { CodingError } from '../CodingError'
 
-/* Runtime cast to Date type */
+/** Runtime cast to Date type */
 export function toDateType(value: string | Date): Date {
   const date = new Date(value)
   if (!isNaN(date as any)) {
@@ -11,7 +11,7 @@ export function toDateType(value: string | Date): Date {
   throw CodingError.new(`Could not convert value ${value} to Date`)
 }
 
-/* Runtime cast to date-time string type */
+/** Runtime cast to date-time string type */
 export function toDateTimeStringType(value: string | Date): string {
   try {
     return new Date(value).toISOString()
@@ -21,26 +21,30 @@ export function toDateTimeStringType(value: string | Date): string {
   }
 }
 
-/* Date Strainer Factory */
+/** Date Strainer Factory */
 export const DateStrainer = (): Strainer<Date, string> => ({
   asDecodeType: toDateType,
   asEncodeType: toDateTimeStringType
 })
 
-/* Date Decoder Factory */
+/** Date Decoder Factory */
 export const DateDecoder = (): Decoder<Date, string> => ({
-  ...DateStrainer(),
+  asDecodeType: toDateType,
+  asEncodeType: toDateTimeStringType,
   decode: toDateType
 })
 
-/* Date Encoder Factory */
+/** Date Encoder Factory */
 export const DateEncoder = (): Encoder<Date, string> => ({
-  ...DateStrainer(),
+  asDecodeType: toDateType,
+  asEncodeType: toDateTimeStringType,
   encode: toDateTimeStringType
 })
 
-/* Date Coder Factory */
+/** Date Coder Factory */
 export const DateCoder = (): Coder<Date, string> => ({
-  ...DateDecoder(),
-  ...DateEncoder()
+  asDecodeType: toDateType,
+  asEncodeType: toDateTimeStringType,
+  decode: toDateType,
+  encode: toDateTimeStringType
 })

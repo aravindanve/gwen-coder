@@ -1,16 +1,13 @@
 import { Strainer, Decoder, Encoder, Coder } from '../Coder'
 import { CodingError } from '../CodingError'
 
-/* Runtime cast to boolean type */
+/** Runtime cast to boolean type */
 export function asBooleanType(value: boolean): boolean {
   switch (typeof value) {
     case 'boolean':
       return value
 
-    case 'string':
-      return value !== ''
-
-    case 'boolean':
+    case 'number':
       if (value === 0) return false
       if (value === 1) return true
       break
@@ -19,30 +16,30 @@ export function asBooleanType(value: boolean): boolean {
   throw CodingError.new(`Could not convert value ${value} to boolean`)
 }
 
-/* Boolean Strainer Factory */
+/** Boolean Strainer Factory */
 export const BooleanStrainer = (): Strainer<boolean, boolean> => ({
   asDecodeType: asBooleanType,
   asEncodeType: asBooleanType
 })
 
-/* Boolean Decoder Factory */
+/** Boolean Decoder Factory */
 export const BooleanDecoder = (): Decoder<boolean, boolean> => ({
-  ...BooleanStrainer(),
-  decode(value) {
-    return this.asDecodeType(value)
-  }
+  asDecodeType: asBooleanType,
+  asEncodeType: asBooleanType,
+  decode: asBooleanType
 })
 
-/* Boolean Encoder Factory */
+/** Boolean Encoder Factory */
 export const BooleanEncoder = (): Encoder<boolean, boolean> => ({
-  ...BooleanStrainer(),
-  encode(value) {
-    return this.asEncodeType(value)
-  }
+  asDecodeType: asBooleanType,
+  asEncodeType: asBooleanType,
+  encode: asBooleanType
 })
 
-/* Boolean Coder Factory */
+/** Boolean Coder Factory */
 export const BooleanCoder = (): Coder<boolean, boolean> => ({
-  ...BooleanDecoder(),
-  ...BooleanEncoder()
+  asDecodeType: asBooleanType,
+  asEncodeType: asBooleanType,
+  decode: asBooleanType,
+  encode: asBooleanType
 })

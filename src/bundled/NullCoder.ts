@@ -1,7 +1,7 @@
 import { Strainer, Decoder, Encoder, Coder } from '../Coder'
 import { CodingError } from '../CodingError'
 
-/* Runtime cast to null type */
+/** Runtime cast to null type */
 export function asNullType(value: null): null {
   if (value === null) {
     return value
@@ -10,30 +10,30 @@ export function asNullType(value: null): null {
   throw CodingError.new(`Could not convert value ${value} to null`)
 }
 
-/* Null Strainer Factory */
+/** Null Strainer Factory */
 export const NullStrainer = (): Strainer<null, null> => ({
   asDecodeType: asNullType,
   asEncodeType: asNullType
 })
 
-/* Null Decoder Factory */
+/** Null Decoder Factory */
 export const NullDecoder = (): Decoder<null, null> => ({
-  ...NullStrainer(),
-  decode(value) {
-    return this.asDecodeType(value)
-  }
+  asDecodeType: asNullType,
+  asEncodeType: asNullType,
+  decode: asNullType
 })
 
-/* Null Encoder Factory */
+/** Null Encoder Factory */
 export const NullEncoder = (): Encoder<null, null> => ({
-  ...NullStrainer(),
-  encode(value) {
-    return this.asEncodeType(value)
-  }
+  asDecodeType: asNullType,
+  asEncodeType: asNullType,
+  encode: asNullType
 })
 
-/* Null Coder Factory */
+/** Null Coder Factory */
 export const NullCoder = (): Coder<null, null> => ({
-  ...NullDecoder(),
-  ...NullEncoder()
+  asDecodeType: asNullType,
+  asEncodeType: asNullType,
+  decode: asNullType,
+  encode: asNullType
 })
