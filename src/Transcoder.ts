@@ -12,6 +12,7 @@ export function Transcoder<T, E>(transcoder: Partial<Transcoder<T, E>>): Transco
     },
     encode() {
       throw EncodingError.new('Not implemented')
-    }
+    },
+    ...transcoder
   }
 }
