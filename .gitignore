@@ -17,7 +17,8 @@ node_modules
 *.log
 *.gz
 
-# Coveralls
+# nyc
+.nyc_output
 coverage
 
 # Benchmarking
