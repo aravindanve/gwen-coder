@@ -27,8 +27,8 @@ export const BooleanCoder = (options?: CodingOptions): Coder<boolean> => ({
 
         case 'string':
           const string = (data as string).toLowerCase()
-          if (string === '0' || string.toLowerCase() === 'false') return false
-          if (string === '1' || string.toLowerCase() === 'true') return true
+          if (string === '0' || string === 'false') return false
+          if (string === '1' || string === 'true') return true
           break
       }
     }
