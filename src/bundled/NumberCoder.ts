@@ -8,14 +8,14 @@ export const NumberCoder = (options?: CodingOptions): Coder<number> => ({
     ...options
   },
   pipe(data) {
-    if (typeof data === 'number') {
+    if (typeof data === 'number' && !isNaN(data)) {
       return data
     }
 
     throw AssertionError.new(`Expected ${data} to be number`)
   },
   decode(data) {
-    if (typeof data === 'number') {
+    if (typeof data === 'number' && !isNaN(data)) {
       return data
     }
     if (this.codingOptions.coerceOnDecode) {
@@ -34,7 +34,7 @@ export const NumberCoder = (options?: CodingOptions): Coder<number> => ({
     throw DecodingError.new(`Could not decode data ${data} as number`)
   },
   encode(data) {
-    if (typeof data === 'number') {
+    if (typeof data === 'number' && !isNaN(data)) {
       return data
     }
 

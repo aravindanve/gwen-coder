@@ -12,6 +12,7 @@ describe('NumberCoder', () => {
     const coder = NumberCoder()
 
     expect(coder.pipe(42)).to.eq(42)
+    expect(() => coder.pipe(NaN)).to.throw(AssertionError)
     expect(() => coder.pipe(undefined as any)).to.throw(AssertionError)
     expect(() => coder.pipe(null as any)).to.throw(AssertionError)
     expect(() => coder.pipe(true as any)).to.throw(AssertionError)
@@ -23,6 +24,7 @@ describe('NumberCoder', () => {
     const coder = NumberCoder()
 
     expect(coder.decode(42)).to.eq(42)
+    expect(() => coder.decode(NaN)).to.throw(DecodingError)
     expect(() => coder.decode(undefined as any)).to.throw(DecodingError)
     expect(() => coder.decode(null as any)).to.throw(DecodingError)
     expect(() => coder.decode(true as any)).to.throw(DecodingError)
@@ -37,6 +39,7 @@ describe('NumberCoder', () => {
     expect(coder.decode('42' as any)).to.eq(42)
     expect(coder.decode(false as any)).to.eq(0)
     expect(coder.decode(true as any)).to.eq(1)
+    expect(() => coder.decode(NaN)).to.throw(DecodingError)
     expect(() => coder.decode(undefined as any)).to.throw(DecodingError)
     expect(() => coder.decode(null as any)).to.throw(DecodingError)
     expect(() => coder.decode('hello' as any)).to.throw(DecodingError)
@@ -47,6 +50,7 @@ describe('NumberCoder', () => {
     const coder = NumberCoder()
 
     expect(coder.encode(42)).to.eq(42)
+    expect(() => coder.encode(NaN)).to.throw(EncodingError)
     expect(() => coder.encode(undefined as any)).to.throw(EncodingError)
     expect(() => coder.encode(null as any)).to.throw(EncodingError)
     expect(() => coder.encode(true as any)).to.throw(EncodingError)
