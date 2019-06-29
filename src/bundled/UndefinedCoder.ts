@@ -1,39 +1,28 @@
-import { Strainer, Decoder, Encoder, Coder } from '../Coder'
-import { CodingError } from '../CodingError'
-
-/** Runtime cast to undefined type */
-export function asUndefinedType(value: undefined): undefined {
-  if (value === undefined) {
-    return value
-  }
-
-  throw CodingError.new(`Could not convert value ${value} to undefined`)
-}
-
-/** Undefined Strainer Factory */
-export const UndefinedStrainer = (): Strainer<undefined, undefined> => ({
-  asDecodeType: asUndefinedType,
-  asEncodeType: asUndefinedType
-})
-
-/** Undefined Decoder Factory */
-export const UndefinedDecoder = (): Decoder<undefined, undefined> => ({
-  asDecodeType: asUndefinedType,
-  asEncodeType: asUndefinedType,
-  decode: asUndefinedType
-})
-
-/** Undefined Encoder Factory */
-export const UndefinedEncoder = (): Encoder<undefined, undefined> => ({
-  asDecodeType: asUndefinedType,
-  asEncodeType: asUndefinedType,
-  encode: asUndefinedType
-})
+import { Coder } from '../shared'
+import { AssertionError, DecodingError, EncodingError } from '../errors'
 
 /** Undefined Coder Factory */
-export const UndefinedCoder = (): Coder<undefined, undefined> => ({
-  asDecodeType: asUndefinedType,
-  asEncodeType: asUndefinedType,
-  decode: asUndefinedType,
-  encode: asUndefinedType
+export const UndefinedCoder = (): Coder<undefined> => ({
+  codingOptions: {},
+  pipe(data) {
+    if (data === undefined) {
+      return data
+    }
+
+    throw AssertionError.new(`Expected ${data} to be undefined`)
+  },
+  decode(data) {
+    if (data === undefined) {
+      return data
+    }
+
+    throw DecodingError.new(`Could not decode data ${data} as undefined`)
+  },
+  encode(data) {
+    if (data === undefined) {
+      return data
+    }
+
+    throw EncodingError.new(`Could not encode data ${data} to undefined`)
+  }
 })

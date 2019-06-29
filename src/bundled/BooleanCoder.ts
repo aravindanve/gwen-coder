@@ -1,45 +1,45 @@
-import { Strainer, Decoder, Encoder, Coder } from '../Coder'
-import { CodingError } from '../CodingError'
-
-/** Runtime cast to boolean type */
-export function asBooleanType(value: boolean): boolean {
-  switch (typeof value) {
-    case 'boolean':
-      return value
-
-    case 'number':
-      if (value === 0) return false
-      if (value === 1) return true
-      break
-  }
-
-  throw CodingError.new(`Could not convert value ${value} to boolean`)
-}
-
-/** Boolean Strainer Factory */
-export const BooleanStrainer = (): Strainer<boolean, boolean> => ({
-  asDecodeType: asBooleanType,
-  asEncodeType: asBooleanType
-})
-
-/** Boolean Decoder Factory */
-export const BooleanDecoder = (): Decoder<boolean, boolean> => ({
-  asDecodeType: asBooleanType,
-  asEncodeType: asBooleanType,
-  decode: asBooleanType
-})
-
-/** Boolean Encoder Factory */
-export const BooleanEncoder = (): Encoder<boolean, boolean> => ({
-  asDecodeType: asBooleanType,
-  asEncodeType: asBooleanType,
-  encode: asBooleanType
-})
+import { Coder, CodingOptions } from '../shared'
+import { AssertionError, DecodingError, EncodingError } from '../errors'
 
 /** Boolean Coder Factory */
-export const BooleanCoder = (): Coder<boolean, boolean> => ({
-  asDecodeType: asBooleanType,
-  asEncodeType: asBooleanType,
-  decode: asBooleanType,
-  encode: asBooleanType
+export const BooleanCoder = (options?: CodingOptions): Coder<boolean> => ({
+  codingOptions: {
+    coerceOnDecode: false,
+    ...options
+  },
+  pipe(data) {
+    if (typeof data === 'boolean') {
+      return data
+    }
+
+    throw AssertionError.new(`Expected ${data} to be boolean`)
+  },
+  decode(data) {
+    if (typeof data === 'boolean') {
+      return data
+    }
+    if (this.codingOptions.coerceOnDecode) {
+      switch (typeof data) {
+        case 'number':
+          if (data === 0) return false
+          if (data === 1) return true
+          break
+
+        case 'string':
+          const string = (data as string).toLowerCase()
+          if (string === '0' || string.toLowerCase() === 'false') return false
+          if (string === '1' || string.toLowerCase() === 'true') return true
+          break
+      }
+    }
+
+    throw DecodingError.new(`Could not decode data ${data} as boolean`)
+  },
+  encode(data) {
+    if (typeof data === 'boolean') {
+      return data
+    }
+
+    throw EncodingError.new(`Could not encode data ${data} to boolean`)
+  }
 })

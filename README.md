@@ -1,3 +1,5 @@
-# Type Coder (Alpha Release, Not suitable for production)
+# Gwen Coder
 
-Strongly typed value encoder and decoder with runtime type checking. Inspired by Swift's Codable.
+Declarative type-safe data decoding, encoding and run-time assertions for JS
+
+> __WARNING__: Still in development, __not suitable for production__

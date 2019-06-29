@@ -1,55 +1,57 @@
 import { expect } from 'chai'
-import { NumberStrainer, NumberDecoder, NumberEncoder, NumberCoder } from './NumberCoder'
+import { NumberCoder } from './NumberCoder'
+import { AssertionError, DecodingError, EncodingError } from '../errors'
 
 describe('NumberCoder', () => {
   it('can be initialized', () => {
-    NumberStrainer()
-    NumberDecoder()
-    NumberEncoder()
     NumberCoder()
+    NumberCoder({})
+    NumberCoder({ coerceOnDecode: true })
   })
-  it('casts to decode type', () => {
-    expect(NumberCoder().asDecodeType(42)).to.eq(42)
-    expect(NumberCoder().asDecodeType('' as any)).to.eq(0)
-    expect(NumberCoder().asDecodeType('42' as any)).to.eq(42)
-    expect(() => NumberCoder().asDecodeType('test' as any)).to.throw('Could not convert')
-    expect(() => NumberCoder().asDecodeType(undefined as any)).to.throw('Could not convert')
-    expect(() => NumberCoder().asDecodeType(null as any)).to.throw('Could not convert')
-    expect(() => NumberCoder().asDecodeType(true as any)).to.throw('Could not convert')
-    expect(() => NumberCoder().asDecodeType([] as any)).to.throw('Could not convert')
-    expect(() => NumberCoder().asDecodeType({} as any)).to.throw('Could not convert')
+  it('asserts type on pipe()', () => {
+    const coder = NumberCoder()
+
+    expect(coder.pipe(42)).to.eq(42)
+    expect(() => coder.pipe(undefined as any)).to.throw(AssertionError)
+    expect(() => coder.pipe(null as any)).to.throw(AssertionError)
+    expect(() => coder.pipe(true as any)).to.throw(AssertionError)
+    expect(() => coder.pipe('42' as any)).to.throw(AssertionError)
+    expect(() => coder.pipe([] as any)).to.throw(AssertionError)
+    expect(() => coder.pipe({} as any)).to.throw(AssertionError)
   })
-  it('casts to encode type', () => {
-    expect(NumberCoder().asEncodeType(42)).to.eq(42)
-    expect(NumberCoder().asEncodeType('' as any)).to.eq(0)
-    expect(NumberCoder().asEncodeType('42' as any)).to.eq(42)
-    expect(() => NumberCoder().asEncodeType('test' as any)).to.throw('Could not convert')
-    expect(() => NumberCoder().asEncodeType(undefined as any)).to.throw('Could not convert')
-    expect(() => NumberCoder().asEncodeType(null as any)).to.throw('Could not convert')
-    expect(() => NumberCoder().asEncodeType(true as any)).to.throw('Could not convert')
-    expect(() => NumberCoder().asEncodeType([] as any)).to.throw('Could not convert')
-    expect(() => NumberCoder().asEncodeType({} as any)).to.throw('Could not convert')
+  it('decodes type on decode()', () => {
+    const coder = NumberCoder()
+
+    expect(coder.decode(42)).to.eq(42)
+    expect(() => coder.decode(undefined as any)).to.throw(DecodingError)
+    expect(() => coder.decode(null as any)).to.throw(DecodingError)
+    expect(() => coder.decode(true as any)).to.throw(DecodingError)
+    expect(() => coder.decode('42' as any)).to.throw(DecodingError)
+    expect(() => coder.decode([] as any)).to.throw(DecodingError)
+    expect(() => coder.decode({} as any)).to.throw(DecodingError)
   })
-  it('decodes type', () => {
-    expect(NumberCoder().decode(42)).to.eq(42)
-    expect(NumberCoder().decode('' as any)).to.eq(0)
-    expect(NumberCoder().decode('42' as any)).to.eq(42)
-    expect(() => NumberCoder().decode('test' as any)).to.throw('Could not convert')
-    expect(() => NumberCoder().decode(undefined as any)).to.throw('Could not convert')
-    expect(() => NumberCoder().decode(null as any)).to.throw('Could not convert')
-    expect(() => NumberCoder().decode(true as any)).to.throw('Could not convert')
-    expect(() => NumberCoder().decode([] as any)).to.throw('Could not convert')
-    expect(() => NumberCoder().decode({} as any)).to.throw('Could not convert')
+  it('coerces type on decode()', () => {
+    const coder = NumberCoder({ coerceOnDecode: true })
+
+    expect(coder.decode(42)).to.eq(42)
+    expect(coder.decode('42' as any)).to.eq(42)
+    expect(coder.decode(false as any)).to.eq(0)
+    expect(coder.decode(true as any)).to.eq(1)
+    expect(() => coder.decode(undefined as any)).to.throw(DecodingError)
+    expect(() => coder.decode(null as any)).to.throw(DecodingError)
+    expect(() => coder.decode('hello' as any)).to.throw(DecodingError)
+    expect(() => coder.decode([] as any)).to.throw(DecodingError)
+    expect(() => coder.decode({} as any)).to.throw(DecodingError)
   })
-  it('encodes type', () => {
-    expect(NumberCoder().encode(42)).to.eq(42)
-    expect(NumberCoder().encode('' as any)).to.eq(0)
-    expect(NumberCoder().encode('42' as any)).to.eq(42)
-    expect(() => NumberCoder().encode('test' as any)).to.throw('Could not convert')
-    expect(() => NumberCoder().encode(undefined as any)).to.throw('Could not convert')
-    expect(() => NumberCoder().encode(null as any)).to.throw('Could not convert')
-    expect(() => NumberCoder().encode(true as any)).to.throw('Could not convert')
-    expect(() => NumberCoder().encode([] as any)).to.throw('Could not convert')
-    expect(() => NumberCoder().encode({} as any)).to.throw('Could not convert')
+  it('encodes type on encode()', () => {
+    const coder = NumberCoder()
+
+    expect(coder.encode(42)).to.eq(42)
+    expect(() => coder.encode(undefined as any)).to.throw(EncodingError)
+    expect(() => coder.encode(null as any)).to.throw(EncodingError)
+    expect(() => coder.encode(true as any)).to.throw(EncodingError)
+    expect(() => coder.encode('42' as any)).to.throw(EncodingError)
+    expect(() => coder.encode([] as any)).to.throw(EncodingError)
+    expect(() => coder.encode({} as any)).to.throw(EncodingError)
   })
 })

@@ -1,0 +1,106 @@
+{
+    "extends": [
+        "tslint-eslint-rules"
+    ],
+    "ignoreDefinitionFiles": false,
+    "rules": {
+        "align": [
+            true,
+            "statements",
+            "members",
+            "elements"
+        ],
+        "array-bracket-spacing": [
+            true,
+            "never"
+        ],
+        "comment-format": [
+            true,
+            "check-space",
+            "check-lowercase",
+            {
+                "ignore-words": [
+                    "FIXME",
+                    "TODO",
+                    "HACK",
+                    "NOTE"
+                ]
+            }
+        ],
+        "eofline": true,
+        "indent": [
+            true,
+            "spaces",
+            2
+        ],
+        "jsdoc-format": true,
+        "linebreak-style": [
+            true,
+            "LF"
+        ],
+        "number-literal-format": true,
+        "object-curly-spacing": [
+            true,
+            "always"
+        ],
+        "object-literal-key-quotes": [
+            true,
+            "as-needed"
+        ],
+        "one-line": [
+            true,
+            "check-catch",
+            "check-finally",
+            "check-else",
+            "check-open-brace",
+            "check-whitespace"
+        ],
+        "quotemark": [
+            true,
+            "single"
+        ],
+        "semicolon": [
+            true,
+            "never"
+        ],
+        "space-before-function-paren": [
+            true,
+            {
+                "anonymous": "always",
+                "asyncArrow": "always",
+                "constructor": "never",
+                "method": "never",
+                "named": "never"
+            }
+        ],
+        "typedef-whitespace": [
+            true,
+            {
+                "call-signature": "nospace",
+                "index-signature": "nospace",
+                "parameter": "nospace",
+                "property-declaration": "nospace",
+                "variable-declaration": "nospace"
+            },
+            {
+                "call-signature": "onespace",
+                "index-signature": "onespace",
+                "parameter": "onespace",
+                "property-declaration": "onespace",
+                "variable-declaration": "onespace"
+            }
+        ],
+        "whitespace": [
+            true,
+            "check-branch",
+            "check-decl",
+            "check-operator",
+            "check-module",
+            "check-separator",
+            "check-type",
+            "check-type-operator",
+            "check-typecast",
+            "check-preblock"
+        ]
+    }
+}

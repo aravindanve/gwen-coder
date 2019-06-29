@@ -1,47 +1,45 @@
 import { expect } from 'chai'
-import { UndefinedStrainer, UndefinedDecoder, UndefinedEncoder, UndefinedCoder } from './UndefinedCoder'
+import { UndefinedCoder } from './UndefinedCoder'
+import { AssertionError, DecodingError, EncodingError } from '../errors'
 
 describe('UndefinedCoder', () => {
   it('can be initialized', () => {
-    UndefinedStrainer()
-    UndefinedDecoder()
-    UndefinedEncoder()
     UndefinedCoder()
   })
-  it('casts to decode type', () => {
-    expect(UndefinedCoder().asDecodeType(undefined)).to.eq(undefined)
-    expect(() => UndefinedCoder().asDecodeType(null as any)).to.throw('Could not convert')
-    expect(() => UndefinedCoder().asDecodeType(true as any)).to.throw('Could not convert')
-    expect(() => UndefinedCoder().asDecodeType('' as any)).to.throw('Could not convert')
-    expect(() => UndefinedCoder().asDecodeType(42 as any)).to.throw('Could not convert')
-    expect(() => UndefinedCoder().asDecodeType([] as any)).to.throw('Could not convert')
-    expect(() => UndefinedCoder().asDecodeType({} as any)).to.throw('Could not convert')
+  it('asserts type on pipe()', () => {
+    const coder = UndefinedCoder()
+
+    expect(coder.pipe(undefined)).to.eq(undefined)
+    expect(() => coder.pipe(null as any)).to.throw(AssertionError)
+    expect(() => coder.pipe(true as any)).to.throw(AssertionError)
+    expect(() => coder.pipe(false as any)).to.throw(AssertionError)
+    expect(() => coder.pipe(0 as any)).to.throw(AssertionError)
+    expect(() => coder.pipe('0' as any)).to.throw(AssertionError)
+    expect(() => coder.pipe([] as any)).to.throw(AssertionError)
+    expect(() => coder.pipe({} as any)).to.throw(AssertionError)
   })
-  it('casts to encode type', () => {
-    expect(UndefinedCoder().asEncodeType(undefined)).to.eq(undefined)
-    expect(() => UndefinedCoder().asEncodeType(null as any)).to.throw('Could not convert')
-    expect(() => UndefinedCoder().asEncodeType(true as any)).to.throw('Could not convert')
-    expect(() => UndefinedCoder().asEncodeType('' as any)).to.throw('Could not convert')
-    expect(() => UndefinedCoder().asEncodeType(42 as any)).to.throw('Could not convert')
-    expect(() => UndefinedCoder().asEncodeType([] as any)).to.throw('Could not convert')
-    expect(() => UndefinedCoder().asEncodeType({} as any)).to.throw('Could not convert')
+  it('decodes type on decode()', () => {
+    const coder = UndefinedCoder()
+
+    expect(coder.decode(undefined)).to.eq(undefined)
+    expect(() => coder.decode(null as any)).to.throw(DecodingError)
+    expect(() => coder.decode(true as any)).to.throw(DecodingError)
+    expect(() => coder.decode(false as any)).to.throw(DecodingError)
+    expect(() => coder.decode(0 as any)).to.throw(DecodingError)
+    expect(() => coder.decode('0' as any)).to.throw(DecodingError)
+    expect(() => coder.decode([] as any)).to.throw(DecodingError)
+    expect(() => coder.decode({} as any)).to.throw(DecodingError)
   })
-  it('decodes type', () => {
-    expect(UndefinedCoder().decode(undefined)).to.eq(undefined)
-    expect(() => UndefinedCoder().decode(null as any)).to.throw('Could not convert')
-    expect(() => UndefinedCoder().decode(true as any)).to.throw('Could not convert')
-    expect(() => UndefinedCoder().decode('' as any)).to.throw('Could not convert')
-    expect(() => UndefinedCoder().decode(42 as any)).to.throw('Could not convert')
-    expect(() => UndefinedCoder().decode([] as any)).to.throw('Could not convert')
-    expect(() => UndefinedCoder().decode({} as any)).to.throw('Could not convert')
-  })
-  it('encodes type', () => {
-    expect(UndefinedCoder().encode(undefined)).to.eq(undefined)
-    expect(() => UndefinedCoder().encode(null as any)).to.throw('Could not convert')
-    expect(() => UndefinedCoder().encode(true as any)).to.throw('Could not convert')
-    expect(() => UndefinedCoder().encode('' as any)).to.throw('Could not convert')
-    expect(() => UndefinedCoder().encode(42 as any)).to.throw('Could not convert')
-    expect(() => UndefinedCoder().encode([] as any)).to.throw('Could not convert')
-    expect(() => UndefinedCoder().encode({} as any)).to.throw('Could not convert')
+  it('encodes type on encode()', () => {
+    const coder = UndefinedCoder()
+
+    expect(coder.encode(undefined)).to.eq(undefined)
+    expect(() => coder.encode(null as any)).to.throw(EncodingError)
+    expect(() => coder.encode(true as any)).to.throw(EncodingError)
+    expect(() => coder.encode(false as any)).to.throw(EncodingError)
+    expect(() => coder.encode(0 as any)).to.throw(EncodingError)
+    expect(() => coder.encode('0' as any)).to.throw(EncodingError)
+    expect(() => coder.encode([] as any)).to.throw(EncodingError)
+    expect(() => coder.encode({} as any)).to.throw(EncodingError)
   })
 })

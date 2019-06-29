@@ -1,45 +1,43 @@
-import { Strainer, Decoder, Encoder, Coder } from '../Coder'
-import { CodingError } from '../CodingError'
-
-/** Runtime cast to number type */
-export function asNumberType(value: number): number {
-  switch (typeof value) {
-    case 'number':
-      return value
-
-    case 'string':
-      if (!isNaN(+value)) {
-        return +value
-      }
-  }
-
-  throw CodingError.new(`Could not convert value ${value} to number`)
-}
-
-/** Number Strainer Factory */
-export const NumberStrainer = (): Strainer<number, number> => ({
-  asDecodeType: asNumberType,
-  asEncodeType: asNumberType
-})
-
-/** Number Decoder Factory */
-export const NumberDecoder = (): Decoder<number, number> => ({
-  asDecodeType: asNumberType,
-  asEncodeType: asNumberType,
-  decode: asNumberType
-})
-
-/** Number Encoder Factory */
-export const NumberEncoder = (): Encoder<number, number> => ({
-  asDecodeType: asNumberType,
-  asEncodeType: asNumberType,
-  encode: asNumberType
-})
+import { Coder, CodingOptions } from '../shared'
+import { AssertionError, DecodingError, EncodingError } from '../errors'
 
 /** Number Coder Factory */
-export const NumberCoder = (): Coder<number, number> => ({
-  asDecodeType: asNumberType,
-  asEncodeType: asNumberType,
-  decode: asNumberType,
-  encode: asNumberType
+export const NumberCoder = (options?: CodingOptions): Coder<number> => ({
+  codingOptions: {
+    coerceOnDecode: false,
+    ...options
+  },
+  pipe(data) {
+    if (typeof data === 'number') {
+      return data
+    }
+
+    throw AssertionError.new(`Expected ${data} to be number`)
+  },
+  decode(data) {
+    if (typeof data === 'number') {
+      return data
+    }
+    if (this.codingOptions.coerceOnDecode) {
+      switch (typeof data) {
+        case 'boolean':
+          return data ? 1 : 0
+
+        case 'string':
+          if (!isNaN(+data)) {
+            return +data
+          }
+          break
+      }
+    }
+
+    throw DecodingError.new(`Could not decode data ${data} as number`)
+  },
+  encode(data) {
+    if (typeof data === 'number') {
+      return data
+    }
+
+    throw EncodingError.new(`Could not encode data ${data} to number`)
+  }
 })

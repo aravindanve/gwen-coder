@@ -1,39 +1,36 @@
-import { Strainer, Decoder, Encoder, Coder } from '../Coder'
-import { CodingError } from '../CodingError'
-
-/** Runtime cast to null type */
-export function asNullType(value: null): null {
-  if (value === null) {
-    return value
-  }
-
-  throw CodingError.new(`Could not convert value ${value} to null`)
-}
-
-/** Null Strainer Factory */
-export const NullStrainer = (): Strainer<null, null> => ({
-  asDecodeType: asNullType,
-  asEncodeType: asNullType
-})
-
-/** Null Decoder Factory */
-export const NullDecoder = (): Decoder<null, null> => ({
-  asDecodeType: asNullType,
-  asEncodeType: asNullType,
-  decode: asNullType
-})
-
-/** Null Encoder Factory */
-export const NullEncoder = (): Encoder<null, null> => ({
-  asDecodeType: asNullType,
-  asEncodeType: asNullType,
-  encode: asNullType
-})
+import { Coder, CodingOptions } from '../shared'
+import { AssertionError, DecodingError, EncodingError } from '../errors'
 
 /** Null Coder Factory */
-export const NullCoder = (): Coder<null, null> => ({
-  asDecodeType: asNullType,
-  asEncodeType: asNullType,
-  decode: asNullType,
-  encode: asNullType
+export const NullCoder = (options?: CodingOptions): Coder<null> => ({
+  codingOptions: {
+    coerceNullFromStringOnDecode: false,
+    ...options
+  },
+  pipe(data) {
+    if (data === null) {
+      return data
+    }
+
+    throw AssertionError.new(`Expected ${data} to be null`)
+  },
+  decode(data) {
+    if (data === null) {
+      return data
+    }
+    if (this.codingOptions.coerceNullFromStringOnDecode) {
+      if (typeof data === 'string' && (data as unknown as string).toLowerCase() === 'null') {
+        return null
+      }
+    }
+
+    throw DecodingError.new(`Could not decode data ${data} as null`)
+  },
+  encode(data) {
+    if (data === null) {
+      return data
+    }
+
+    throw EncodingError.new(`Could not encode data ${data} to null`)
+  }
 })
