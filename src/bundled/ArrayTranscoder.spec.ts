@@ -13,8 +13,8 @@ describe('ArrayTranscoder', () => {
     ArrayTranscoder(UnionTranscoder(StringCoder(), NumberCoder()))
   })
   it('asserts type on pipe()', async () => {
-    expect(ArrayTranscoder(NumberCoder()).pipe([1, 2, 3])).to.eventually.deep.eq([1, 2, 3])
-    expect(ArrayTranscoder(NumberCoder()).pipe([])).to.eventually.deep.eq([])
+    await expect(ArrayTranscoder(NumberCoder()).pipe([1, 2, 3])).to.eventually.deep.eq([1, 2, 3])
+    await expect(ArrayTranscoder(NumberCoder()).pipe([])).to.eventually.deep.eq([])
 
     const coder = ArrayTranscoder(UnionTranscoder(NumberCoder(), StringCoder()))
 
@@ -32,8 +32,8 @@ describe('ArrayTranscoder', () => {
     await expect(coder.pipe([1, {} as any, 3])).to.be.rejectedWith(AssertionError)
   })
   it('decodes type on decode()', async () => {
-    expect(ArrayTranscoder(NumberCoder()).decode([1, 2, 3])).to.eventually.deep.eq([1, 2, 3])
-    expect(ArrayTranscoder(NumberCoder()).decode([])).to.eventually.deep.eq([])
+    await expect(ArrayTranscoder(NumberCoder()).decode([1, 2, 3])).to.eventually.deep.eq([1, 2, 3])
+    await expect(ArrayTranscoder(NumberCoder()).decode([])).to.eventually.deep.eq([])
 
     const coder = ArrayTranscoder(UnionTranscoder(NumberCoder(), StringCoder()))
 
@@ -51,8 +51,8 @@ describe('ArrayTranscoder', () => {
     await expect(coder.decode([1, {} as any, 3])).to.be.rejectedWith(DecodingError)
   })
   it('encodes type on encode()', async () => {
-    expect(ArrayTranscoder(NumberCoder()).encode([1, 2, 3])).to.eventually.deep.eq([1, 2, 3])
-    expect(ArrayTranscoder(NumberCoder()).encode([])).to.eventually.deep.eq([])
+    await expect(ArrayTranscoder(NumberCoder()).encode([1, 2, 3])).to.eventually.deep.eq([1, 2, 3])
+    await expect(ArrayTranscoder(NumberCoder()).encode([])).to.eventually.deep.eq([])
 
     const coder = ArrayTranscoder(UnionTranscoder(NumberCoder(), StringCoder()))
 

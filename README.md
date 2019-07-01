@@ -12,10 +12,15 @@ Declarative type-safe data decoding, encoding and run-time assertions for JS
 - [x] Number Coder
 - [x] String Coder
 - [x] Array Transcoder
-- [x] Object Transcoder
+- [x] Structure Transcoder
 - [x] Union Transcoder
 - [x] Intersection Transcoder
+- [x] Optional Transcoder
+- [x] Nullable Transcoder
+- [ ] Any Coder
+- [ ] Literal Coder
 - [ ] Date Transcoder
-- [ ] Integer Transcoder
+- [ ] Integer Coder
 - [ ] Tuple Transcoder
-- [ ] Buffer Transcoder
+- [ ] Record Transcoder
+- [ ] Buffer Coder

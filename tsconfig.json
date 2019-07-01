@@ -9,6 +9,7 @@
     "resolveJsonModule": true,
     "strict": true,
     "isolatedModules": false,
+    "declaration": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "noImplicitAny": true,
@@ -24,5 +25,8 @@
   },
   "include": [
     "src"
+  ],
+  "exclude": [
+    "**/*.spec.ts"
   ]
 }
