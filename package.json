@@ -1,6 +1,6 @@
 {
   "name": "gwen-coder",
-  "version": "1.0.0-beta.2",
+  "version": "1.0.0-beta.3",
   "description": "Declarative type-safe data decoding, encoding and run-time assertions for JS",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -20,10 +20,12 @@
   },
   "keywords": [
     "json",
+    "declarative",
     "validator",
-    "codable",
+    "runtime",
     "type-checking",
-    "type-guard"
+    "type-guard",
+    "codable"
   ],
   "author": "Aravindan Ve <aravindan.ve@outlook.com>",
   "license": "MIT",
@@ -55,14 +57,14 @@
     "@types/mocha": "^5.2.7",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
-    "dtslint": "^0.8.0",
-    "mocha": "^6.1.4",
+    "dtslint": "^0.9.0",
+    "mocha": "^6.2.0",
     "nyc": "^14.1.1",
     "rimraf": "^2.6.3",
     "ts-mocha": "^6.0.0",
     "tslint": "^5.18.0",
     "tslint-eslint-rules": "^5.4.0",
-    "typescript": "^3.5.2"
+    "typescript": "^3.5.3"
   },
   "dependencies": {},
   "engines": {

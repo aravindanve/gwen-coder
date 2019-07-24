@@ -1,22 +1,21 @@
 import { expect } from 'chai'
-import { ArrayTranscoder } from './ArrayTranscoder'
+import { ListTranscoder } from './ListTranscoder'
 import { AssertionError, DecodingError, EncodingError } from '../errors'
 import { StringCoder } from './StringCoder'
 import { NumberCoder } from './NumberCoder'
 import { UnionTranscoder } from './UnionTranscoder'
 
-// TODO: add tests for transcoded array
-describe('ArrayTranscoder', () => {
+describe('ListTranscoder', () => {
   it('can be initialized', () => {
-    ArrayTranscoder(StringCoder())
-    ArrayTranscoder(NumberCoder())
-    ArrayTranscoder(UnionTranscoder(StringCoder(), NumberCoder()))
+    ListTranscoder(StringCoder())
+    ListTranscoder(NumberCoder())
+    ListTranscoder(UnionTranscoder(StringCoder(), NumberCoder()))
   })
   it('asserts type on pipe()', async () => {
-    await expect(ArrayTranscoder(NumberCoder()).pipe([1, 2, 3])).to.eventually.deep.eq([1, 2, 3])
-    await expect(ArrayTranscoder(NumberCoder()).pipe([])).to.eventually.deep.eq([])
+    await expect(ListTranscoder(NumberCoder()).pipe([1, 2, 3])).to.eventually.deep.eq([1, 2, 3])
+    await expect(ListTranscoder(NumberCoder()).pipe([])).to.eventually.deep.eq([])
 
-    const coder = ArrayTranscoder(UnionTranscoder(NumberCoder(), StringCoder()))
+    const coder = ListTranscoder(UnionTranscoder(NumberCoder(), StringCoder()))
 
     await expect(coder.pipe([1, 'hello', 3])).to.eventually.deep.eq([1, 'hello', 3])
     await expect(coder.pipe(undefined as any)).to.be.rejectedWith(AssertionError)
@@ -32,10 +31,10 @@ describe('ArrayTranscoder', () => {
     await expect(coder.pipe([1, {} as any, 3])).to.be.rejectedWith(AssertionError)
   })
   it('decodes type on decode()', async () => {
-    await expect(ArrayTranscoder(NumberCoder()).decode([1, 2, 3])).to.eventually.deep.eq([1, 2, 3])
-    await expect(ArrayTranscoder(NumberCoder()).decode([])).to.eventually.deep.eq([])
+    await expect(ListTranscoder(NumberCoder()).decode([1, 2, 3])).to.eventually.deep.eq([1, 2, 3])
+    await expect(ListTranscoder(NumberCoder()).decode([])).to.eventually.deep.eq([])
 
-    const coder = ArrayTranscoder(UnionTranscoder(NumberCoder(), StringCoder()))
+    const coder = ListTranscoder(UnionTranscoder(NumberCoder(), StringCoder()))
 
     await expect(coder.decode([1, 'hello', 3])).to.eventually.deep.eq([1, 'hello', 3])
     await expect(coder.decode(undefined as any)).to.be.rejectedWith(DecodingError)
@@ -51,10 +50,10 @@ describe('ArrayTranscoder', () => {
     await expect(coder.decode([1, {} as any, 3])).to.be.rejectedWith(DecodingError)
   })
   it('encodes type on encode()', async () => {
-    await expect(ArrayTranscoder(NumberCoder()).encode([1, 2, 3])).to.eventually.deep.eq([1, 2, 3])
-    await expect(ArrayTranscoder(NumberCoder()).encode([])).to.eventually.deep.eq([])
+    await expect(ListTranscoder(NumberCoder()).encode([1, 2, 3])).to.eventually.deep.eq([1, 2, 3])
+    await expect(ListTranscoder(NumberCoder()).encode([])).to.eventually.deep.eq([])
 
-    const coder = ArrayTranscoder(UnionTranscoder(NumberCoder(), StringCoder()))
+    const coder = ListTranscoder(UnionTranscoder(NumberCoder(), StringCoder()))
 
     await expect(coder.encode([1, 'hello', 3])).to.eventually.deep.eq([1, 'hello', 3])
     await expect(coder.encode(undefined as any)).to.be.rejectedWith(EncodingError)

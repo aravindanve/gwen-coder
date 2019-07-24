@@ -4,7 +4,6 @@ import { AssertionError, DecodingError, EncodingError } from '../errors'
 import { StringCoder } from './StringCoder'
 import { NullCoder } from './NullCoder'
 
-// TODO: add tests for transcoded union
 describe('UnionTranscoder', () => {
   it('can be initialized', () => {
     UnionTranscoder(StringCoder(), NullCoder())

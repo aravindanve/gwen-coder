@@ -1,2 +1,1 @@
-import { Coder, CodingOptions } from '../shared';
-export declare function BooleanCoder(options?: CodingOptions): Coder<boolean>;
+export declare const BooleanCoder: () => import("../shared").Transcoder<boolean, boolean>;

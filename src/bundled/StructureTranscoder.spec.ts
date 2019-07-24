@@ -4,8 +4,8 @@ import { AssertionError, DecodingError, EncodingError } from '../errors'
 import { StringCoder } from './StringCoder'
 import { NumberCoder } from './NumberCoder'
 import { OptionalTranscoder } from './OptionalTranscoder'
+import { ConfiguredTranscoder } from './ConfiguredTranscoder'
 
-// TODO: add tests for transcoded object
 describe('StructureTranscoder', () => {
   it('can be initialized', () => {
     StructureTranscoder({})
@@ -15,6 +15,7 @@ describe('StructureTranscoder', () => {
   it('asserts type on pipe()', async () => {
     await expect(StructureTranscoder({ name: StringCoder(), age: NumberCoder() }).pipe({ name: 'a', age: 1 })).to.eventually.deep.eq({ name: 'a', age: 1 })
     await expect(StructureTranscoder({ name: StringCoder() }).pipe({ name: 'a' } as any)).to.eventually.deep.eq({ name: 'a' })
+    await expect(ConfiguredTranscoder(StructureTranscoder({ name: StringCoder() }), { ignoreExtraOnPipe: true }).pipe({ name: 'a', age: 1 } as any)).to.eventually.deep.eq({ name: 'a', age: 1 })
 
     const coder = StructureTranscoder({ name: StringCoder(), age: OptionalTranscoder(NumberCoder()) })
 

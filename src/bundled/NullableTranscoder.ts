@@ -1,35 +1,33 @@
-import { Transcoder, CodingOptions } from '../shared'
+import { Transcoder } from '../shared'
 import { NullCoder } from './NullCoder'
 
 /** Nullable Transcoder Factory */
-export function NullableTranscoder<T, E>(type: Transcoder<T, E>, options?: CodingOptions): Transcoder<T | null, E | null> {
-  const codingOptions = options || {}
-  const nullCoder = NullCoder(codingOptions)
+export function NullableTranscoder<T, E>(type: Transcoder<T, E>): Transcoder<T | null, E | null> {
+  const coder = NullCoder()
 
   return {
-    codingOptions,
-    pipe(data) {
+    pipe(data, options) {
       try {
-        return nullCoder.pipe(data as any)
+        return coder.pipe(data as any, options)
 
       } catch {
-        return type.pipe(data as any)
+        return type.pipe(data as any, options)
       }
     },
-    decode(data) {
+    decode(data, options) {
       try {
-        return nullCoder.decode(data as any)
+        return coder.decode(data as any, options)
 
       } catch {
-        return type.decode(data as any)
+        return type.decode(data as any, options)
       }
     },
-    encode(data) {
+    encode(data, options) {
       try {
-        return nullCoder.encode(data as any)
+        return coder.encode(data as any, options)
 
       } catch {
-        return type.encode(data as any)
+        return type.encode(data as any, options)
       }
     }
   }

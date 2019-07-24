@@ -1,2 +1,1 @@
-import { Coder, CodingOptions } from '../shared';
-export declare function StringCoder(options?: CodingOptions): Coder<string>;
+export declare const StringCoder: () => import("../shared").Transcoder<string, string>;

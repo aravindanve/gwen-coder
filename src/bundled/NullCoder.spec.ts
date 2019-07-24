@@ -5,8 +5,6 @@ import { AssertionError, DecodingError, EncodingError } from '../errors'
 describe('NullCoder', () => {
   it('can be initialized', () => {
     NullCoder()
-    NullCoder({})
-    NullCoder({ coerceNullFromStringOnDecode: true })
   })
   it('asserts type on pipe()', () => {
     const coder = NullCoder()
@@ -33,18 +31,18 @@ describe('NullCoder', () => {
     expect(() => coder.decode({} as any)).to.throw(DecodingError)
   })
   it('coerces type on decode()', () => {
-    const coder = NullCoder({ coerceNullFromStringOnDecode: true })
+    const coder = NullCoder()
 
-    expect(coder.decode(null)).to.eq(null)
-    expect(coder.decode('null' as any)).to.eq(null)
-    expect(coder.decode('NULL' as any)).to.eq(null)
-    expect(() => coder.decode(undefined as any)).to.throw(DecodingError)
-    expect(() => coder.decode(true as any)).to.throw(DecodingError)
-    expect(() => coder.decode(false as any)).to.throw(DecodingError)
-    expect(() => coder.decode(0 as any)).to.throw(DecodingError)
-    expect(() => coder.decode('0' as any)).to.throw(DecodingError)
-    expect(() => coder.decode([] as any)).to.throw(DecodingError)
-    expect(() => coder.decode({} as any)).to.throw(DecodingError)
+    expect(coder.decode(null, { coerceNullFromStringOnDecode: true })).to.eq(null)
+    expect(coder.decode('null' as any, { coerceNullFromStringOnDecode: true })).to.eq(null)
+    expect(coder.decode('NULL' as any, { coerceNullFromStringOnDecode: true })).to.eq(null)
+    expect(() => coder.decode(undefined as any, { coerceNullFromStringOnDecode: true })).to.throw(DecodingError)
+    expect(() => coder.decode(true as any, { coerceNullFromStringOnDecode: true })).to.throw(DecodingError)
+    expect(() => coder.decode(false as any, { coerceNullFromStringOnDecode: true })).to.throw(DecodingError)
+    expect(() => coder.decode(0 as any, { coerceNullFromStringOnDecode: true })).to.throw(DecodingError)
+    expect(() => coder.decode('0' as any, { coerceNullFromStringOnDecode: true })).to.throw(DecodingError)
+    expect(() => coder.decode([] as any, { coerceNullFromStringOnDecode: true })).to.throw(DecodingError)
+    expect(() => coder.decode({} as any, { coerceNullFromStringOnDecode: true })).to.throw(DecodingError)
   })
   it('encodes type on encode()', () => {
     const coder = NullCoder()

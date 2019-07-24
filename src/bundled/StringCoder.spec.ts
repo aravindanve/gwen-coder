@@ -5,8 +5,6 @@ import { AssertionError, DecodingError, EncodingError } from '../errors'
 describe('StringCoder', () => {
   it('can be initialized', () => {
     StringCoder()
-    StringCoder({})
-    StringCoder({ coerceOnDecode: true })
   })
   it('asserts type on pipe()', () => {
     const coder = StringCoder()
@@ -31,15 +29,15 @@ describe('StringCoder', () => {
     expect(() => coder.decode({} as any)).to.throw(DecodingError)
   })
   it('coerces type on decode()', () => {
-    const coder = StringCoder({ coerceOnDecode: true })
+    const coder = StringCoder()
 
-    expect(coder.decode('hello')).to.eq('hello')
-    expect(coder.decode(42 as any)).to.eq('42')
-    expect(coder.decode(true as any)).to.eq('true')
-    expect(() => coder.decode(undefined as any)).to.throw(DecodingError)
-    expect(() => coder.decode(null as any)).to.throw(DecodingError)
-    expect(() => coder.decode([] as any)).to.throw(DecodingError)
-    expect(() => coder.decode({} as any)).to.throw(DecodingError)
+    expect(coder.decode('hello', { coerceOnDecode: true })).to.eq('hello')
+    expect(coder.decode(42 as any, { coerceOnDecode: true })).to.eq('42')
+    expect(coder.decode(true as any, { coerceOnDecode: true })).to.eq('true')
+    expect(() => coder.decode(undefined as any, { coerceOnDecode: true })).to.throw(DecodingError)
+    expect(() => coder.decode(null as any, { coerceOnDecode: true })).to.throw(DecodingError)
+    expect(() => coder.decode([] as any, { coerceOnDecode: true })).to.throw(DecodingError)
+    expect(() => coder.decode({} as any, { coerceOnDecode: true })).to.throw(DecodingError)
   })
   it('encodes type on encode()', () => {
     const coder = StringCoder()

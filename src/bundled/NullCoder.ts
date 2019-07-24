@@ -1,40 +1,33 @@
-import { Coder, CodingOptions } from '../shared'
+import { Coder } from '../shared'
 import { AssertionError, DecodingError, EncodingError } from '../errors'
+import { defaultCodingOptions } from '../defaults'
 
 /** Null Coder Factory */
-export function NullCoder(options?: CodingOptions): Coder<null> {
-  const codingOptions = {
-    coerceNullFromStringOnDecode: false,
-    ...options
-  }
-
-  return {
-    codingOptions,
-    pipe(data) {
-      if (data === null) {
-        return data
-      }
-
-      throw AssertionError.new(`Expected ${data} to be null`)
-    },
-    decode(data) {
-      if (data === null) {
-        return data
-      }
-      if (codingOptions.coerceNullFromStringOnDecode) {
-        if (typeof data === 'string' && (data as unknown as string).toLowerCase() === 'null') {
-          return null
-        }
-      }
-
-      throw DecodingError.new(`Could not decode data ${data} as null`)
-    },
-    encode(data) {
-      if (data === null) {
-        return data
-      }
-
-      throw EncodingError.new(`Could not encode data ${data} to null`)
+export const NullCoder = (): Coder<null> => ({
+  pipe(data) {
+    if (data === null) {
+      return data
     }
+
+    throw AssertionError.new(`Expected ${data} to be null`)
+  },
+  decode(data, options) {
+    if (data === null) {
+      return data
+    }
+    if (options ? options.coerceNullFromStringOnDecode : defaultCodingOptions.coerceNullFromStringOnDecode) {
+      if (typeof data === 'string' && (data as unknown as string).toLowerCase() === 'null') {
+        return null
+      }
+    }
+
+    throw DecodingError.new(`Could not decode data ${data} as null`)
+  },
+  encode(data) {
+    if (data === null) {
+      return data
+    }
+
+    throw EncodingError.new(`Could not encode data ${data} to null`)
   }
-}
+})

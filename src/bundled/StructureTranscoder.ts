@@ -1,13 +1,11 @@
 import { Transcoder } from '../shared'
 import { AssertionError, DecodingError, EncodingError } from '../errors'
+import { defaultCodingOptions } from '../defaults'
 
 /** String-keyed map of property transcoders */
 export type PropertyTranscoders = {
   [key: string]: Transcoder<unknown, unknown>
 }
-
-/** Additional property transcoder */
-export type AdditionalPropertyTranscoder = Transcoder<unknown, unknown>
 
 /** Specialized structure type */
 export type AlwaysDefinedKeys<T> = { [K in keyof T]: undefined extends T[K] ? never : K }[keyof T]
@@ -36,21 +34,21 @@ export function StructureTranscoder<P extends PropertyTranscoders>(properties: P
   const knownEntries = Object.entries(properties)
 
   return {
-    codingOptions: {},
-    async pipe(data) {
+    async pipe(data, options) {
       if (typeof data !== 'object' || data === null) {
         throw AssertionError.new(`Expected ${data} to be object`)
       }
 
-      // check for unknown keys
-      const unknownKeys = Object.keys(data).filter(key => !knownKeysMap[key])
-      if (unknownKeys.length) {
-        throw AssertionError.new(`Found unknown keys ${unknownKeys} in structure`)
+      if (!(options ? options.ignoreExtraOnPipe : defaultCodingOptions.ignoreExtraOnPipe)) {
+        const extraKeys = Object.keys(data).filter(key => !knownKeysMap[key])
+        if (extraKeys.length) {
+          throw AssertionError.new(`Found unknown keys ${extraKeys} in structure`)
+        }
       }
 
       for (const [key, type] of knownEntries) {
         try {
-          await type.pipe(data[key])
+          await type.pipe(data[key], options)
 
         } catch (err) {
           throw AssertionError.pushContext(err, { key, ref: this })
@@ -59,7 +57,7 @@ export function StructureTranscoder<P extends PropertyTranscoders>(properties: P
 
       return data
     },
-    async decode(data) {
+    async decode(data, options) {
       if (typeof data !== 'object' || data === null) {
         throw DecodingError.new(`Could not decode data ${data} as structure`)
       }
@@ -67,7 +65,7 @@ export function StructureTranscoder<P extends PropertyTranscoders>(properties: P
       const result = {}
       for (const [key, type] of knownEntries) {
         try {
-          result[key] = await type.decode(data[key])
+          result[key] = await type.decode(data[key], options)
 
         } catch (err) {
           throw DecodingError.pushContext(err, { key, ref: this })
@@ -76,7 +74,7 @@ export function StructureTranscoder<P extends PropertyTranscoders>(properties: P
 
       return result as any
     },
-    async encode(data) {
+    async encode(data, options) {
       if (typeof data !== 'object' || data === null) {
         throw EncodingError.new(`Could not encode data ${data} to structure`)
       }
@@ -84,7 +82,7 @@ export function StructureTranscoder<P extends PropertyTranscoders>(properties: P
       const result = {}
       for (const [key, type] of knownEntries) {
         try {
-          result[key] = await type.encode(data[key])
+          result[key] = await type.encode(data[key], options)
 
         } catch (err) {
           throw EncodingError.pushContext(err, { key, ref: this })

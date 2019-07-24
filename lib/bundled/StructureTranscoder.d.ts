@@ -2,7 +2,6 @@ import { Transcoder } from '../shared';
 export declare type PropertyTranscoders = {
     [key: string]: Transcoder<unknown, unknown>;
 };
-export declare type AdditionalPropertyTranscoder = Transcoder<unknown, unknown>;
 export declare type AlwaysDefinedKeys<T> = {
     [K in keyof T]: undefined extends T[K] ? never : K;
 }[keyof T];
