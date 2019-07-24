@@ -1,5 +1,5 @@
-export type PipeOptions = {
-  ignoreExtraOnPipe?: boolean
+export type AssertionOptions = {
+  ignoreExtraOnAssert?: boolean
 }
 
 export type DecodingOptions = {
@@ -8,10 +8,10 @@ export type DecodingOptions = {
 }
 
 export type EncodingOptions = {}
-export type CodingOptions = PipeOptions & DecodingOptions & EncodingOptions
+export type CodingOptions = AssertionOptions & DecodingOptions & EncodingOptions
 
 export interface Transcoder<T, E> {
-  pipe(data: T, options?: PipeOptions): T | Promise<T>
+  assert(data: T, options?: AssertionOptions): T | Promise<T>
   decode(data: E, options?: DecodingOptions): T | Promise<T>
   encode(data: T, options?: EncodingOptions): E | Promise<E>
 }

@@ -6,18 +6,18 @@ describe('DateTimeTranscoder', () => {
   it('can be initialized', () => {
     DateTimeTranscoder()
   })
-  it('asserts type on pipe()', () => {
+  it('asserts type on assert()', () => {
     const coder = DateTimeTranscoder()
     const date = new Date()
 
-    expect((coder.pipe(date) as Date).toISOString()).to.eq(date.toISOString())
-    expect(() => coder.pipe(undefined as any)).to.throw(AssertionError)
-    expect(() => coder.pipe(new Date('bad date'))).to.throw(AssertionError)
-    expect(() => coder.pipe(null as any)).to.throw(AssertionError)
-    expect(() => coder.pipe(true as any)).to.throw(AssertionError)
-    expect(() => coder.pipe(42 as any)).to.throw(AssertionError)
-    expect(() => coder.pipe([] as any)).to.throw(AssertionError)
-    expect(() => coder.pipe({} as any)).to.throw(AssertionError)
+    expect((coder.assert(date) as Date).toISOString()).to.eq(date.toISOString())
+    expect(() => coder.assert(undefined as any)).to.throw(AssertionError)
+    expect(() => coder.assert(new Date('bad date'))).to.throw(AssertionError)
+    expect(() => coder.assert(null as any)).to.throw(AssertionError)
+    expect(() => coder.assert(true as any)).to.throw(AssertionError)
+    expect(() => coder.assert(42 as any)).to.throw(AssertionError)
+    expect(() => coder.assert([] as any)).to.throw(AssertionError)
+    expect(() => coder.assert({} as any)).to.throw(AssertionError)
   })
   it('decodes type on decode()', () => {
     const coder = DateTimeTranscoder()

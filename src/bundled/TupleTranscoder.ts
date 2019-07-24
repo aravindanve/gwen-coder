@@ -12,12 +12,12 @@ export function TupleTranscoder<A1, A2, B1, B2, C1, C2, D1, D2, E1, E2>(a: Trans
 export function TupleTranscoder<A1, A2, B1, B2, C1, C2, D1, D2, E1, E2, F1, F2>(a: Transcoder<A1, A2>, b: Transcoder<B1, B2>, c: Transcoder<C1, C2>, d: Transcoder<D1, D2>, e: Transcoder<E1, E2>, f: Transcoder<F1, F2>): Transcoder<[A1, B1, C1, D1, E1, F1], [A2, B2, C2, D2, E2, F2]>
 export function TupleTranscoder(...types: Transcoder<any, any>[]): Transcoder<any, any> {
   return {
-    async pipe(data, options) {
+    async assert(data, options) {
       if (!Array.isArray(data)) {
         throw AssertionError.new(`Expected ${data} to be array`)
       }
 
-      if (!(options ? options.ignoreExtraOnPipe : defaultCodingOptions.ignoreExtraOnPipe)) {
+      if (!(options ? options.ignoreExtraOnAssert : defaultCodingOptions.ignoreExtraOnAssert)) {
         if (types.length !== data.length) {
           throw AssertionError.new(`Expected ${types.length} but found ${data.length} items in tuple`)
         }
@@ -25,7 +25,7 @@ export function TupleTranscoder(...types: Transcoder<any, any>[]): Transcoder<an
 
       for (const [key, type] of types.entries()) {
         try {
-          await type.pipe(data[key], options)
+          await type.assert(data[key], options)
 
         } catch (err) {
           throw AssertionError.pushContext(err, { key, ref: this })

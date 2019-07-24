@@ -4,7 +4,7 @@ import { defaultCodingOptions } from '../defaults'
 
 /** Number Coder Factory */
 export const NumberCoder = (): Coder<number> => ({
-  pipe(data) {
+  assert(data) {
     if (typeof data === 'number' && !isNaN(data)) {
       return data
     }

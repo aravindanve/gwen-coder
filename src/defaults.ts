@@ -1,7 +1,7 @@
 import { CodingOptions } from './shared'
 
 export const defaultCodingOptions: CodingOptions = {
-  ignoreExtraOnPipe: false,
+  ignoreExtraOnAssert: false,
   coerceOnDecode: false,
   coerceNullFromStringOnDecode: false
 }

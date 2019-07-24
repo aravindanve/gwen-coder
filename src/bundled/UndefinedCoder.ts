@@ -3,7 +3,7 @@ import { AssertionError, DecodingError, EncodingError } from '../errors'
 
 /** Undefined Coder Factory */
 export const UndefinedCoder = (): Coder<undefined> => ({
-  pipe(data) {
+  assert(data) {
     if (data === undefined) {
       return data
     }

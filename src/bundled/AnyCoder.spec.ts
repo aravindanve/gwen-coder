@@ -6,17 +6,17 @@ describe('AnyCoder', () => {
   it('can be initialized', () => {
     AnyCoder()
   })
-  it('asserts type on pipe()', () => {
+  it('asserts type on assert()', () => {
     const coder = AnyCoder()
 
-    expect(coder.pipe(null)).to.eq(null)
-    expect(coder.pipe(undefined)).to.eq(undefined)
-    expect(coder.pipe(true)).to.eq(true)
-    expect(coder.pipe(false)).to.eq(false)
-    expect(coder.pipe(0)).to.eq(0)
-    expect(coder.pipe('0')).to.eq('0')
-    expect(coder.pipe([])).to.deep.eq([])
-    expect(coder.pipe({})).to.deep.eq({})
+    expect(coder.assert(null)).to.eq(null)
+    expect(coder.assert(undefined)).to.eq(undefined)
+    expect(coder.assert(true)).to.eq(true)
+    expect(coder.assert(false)).to.eq(false)
+    expect(coder.assert(0)).to.eq(0)
+    expect(coder.assert('0')).to.eq('0')
+    expect(coder.assert([])).to.deep.eq([])
+    expect(coder.assert({})).to.deep.eq({})
   })
   it('decodes type on decode()', () => {
     const coder = AnyCoder()

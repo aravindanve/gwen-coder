@@ -6,17 +6,17 @@ describe('NullCoder', () => {
   it('can be initialized', () => {
     NullCoder()
   })
-  it('asserts type on pipe()', () => {
+  it('asserts type on assert()', () => {
     const coder = NullCoder()
 
-    expect(coder.pipe(null)).to.eq(null)
-    expect(() => coder.pipe(undefined as any)).to.throw(AssertionError)
-    expect(() => coder.pipe(true as any)).to.throw(AssertionError)
-    expect(() => coder.pipe(false as any)).to.throw(AssertionError)
-    expect(() => coder.pipe(0 as any)).to.throw(AssertionError)
-    expect(() => coder.pipe('0' as any)).to.throw(AssertionError)
-    expect(() => coder.pipe([] as any)).to.throw(AssertionError)
-    expect(() => coder.pipe({} as any)).to.throw(AssertionError)
+    expect(coder.assert(null)).to.eq(null)
+    expect(() => coder.assert(undefined as any)).to.throw(AssertionError)
+    expect(() => coder.assert(true as any)).to.throw(AssertionError)
+    expect(() => coder.assert(false as any)).to.throw(AssertionError)
+    expect(() => coder.assert(0 as any)).to.throw(AssertionError)
+    expect(() => coder.assert('0' as any)).to.throw(AssertionError)
+    expect(() => coder.assert([] as any)).to.throw(AssertionError)
+    expect(() => coder.assert({} as any)).to.throw(AssertionError)
   })
   it('decodes type on decode()', () => {
     const coder = NullCoder()

@@ -11,15 +11,15 @@ export type Record<K, V> =
 
 /** Record Coder Factory */
 export const RecordTranscoder = <K extends RecordKeyType, T, E>(key: Coder<K>, value: Transcoder<T, E>): Transcoder<Record<K, T>, Record<K, E>> => ({
-  async pipe(data, options) {
+  async assert(data, options) {
     if (typeof data !== 'object' || data === null) {
       throw AssertionError.new(`Expected ${data} to be object`)
     }
 
     for (const [_key, _value] of Object.entries(data)) {
       try {
-        await key.pipe(_key as any, options)
-        await value.pipe(_value, options)
+        await key.assert(_key as any, options)
+        await value.assert(_value, options)
 
       } catch (err) {
         throw AssertionError.pushContext(err, { key: _key, ref: this })

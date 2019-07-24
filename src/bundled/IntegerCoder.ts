@@ -7,8 +7,8 @@ export function IntegerCoder(): Coder<number> {
   const coder = NumberCoder()
 
   return {
-    pipe(data, options) {
-      if (Number.isInteger(coder.pipe(data, options) as number)) {
+    assert(data, options) {
+      if (Number.isInteger(coder.assert(data, options) as number)) {
         return data
       }
 

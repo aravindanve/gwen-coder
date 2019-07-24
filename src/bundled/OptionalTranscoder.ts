@@ -6,12 +6,12 @@ export function OptionalTranscoder<T, E>(type: Transcoder<T, E>): Transcoder<T |
   const coder = UndefinedCoder()
 
   return {
-    pipe(data, options) {
+    assert(data, options) {
       try {
-        return coder.pipe(data as any, options)
+        return coder.assert(data as any, options)
 
       } catch {
-        return type.pipe(data as any, options)
+        return type.assert(data as any, options)
       }
     },
     decode(data, options) {

@@ -34,12 +34,12 @@ export function StructureTranscoder<P extends PropertyTranscoders>(properties: P
   const knownEntries = Object.entries(properties)
 
   return {
-    async pipe(data, options) {
+    async assert(data, options) {
       if (typeof data !== 'object' || data === null) {
         throw AssertionError.new(`Expected ${data} to be object`)
       }
 
-      if (!(options ? options.ignoreExtraOnPipe : defaultCodingOptions.ignoreExtraOnPipe)) {
+      if (!(options ? options.ignoreExtraOnAssert : defaultCodingOptions.ignoreExtraOnAssert)) {
         const extraKeys = Object.keys(data).filter(key => !knownKeysMap[key])
         if (extraKeys.length) {
           throw AssertionError.new(`Found unknown keys ${extraKeys} in structure`)
@@ -48,7 +48,7 @@ export function StructureTranscoder<P extends PropertyTranscoders>(properties: P
 
       for (const [key, type] of knownEntries) {
         try {
-          await type.pipe(data[key], options)
+          await type.assert(data[key], options)
 
         } catch (err) {
           throw AssertionError.pushContext(err, { key, ref: this })

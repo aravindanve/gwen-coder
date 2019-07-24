@@ -6,17 +6,17 @@ describe('BooleanCoder', () => {
   it('can be initialized', () => {
     BooleanCoder()
   })
-  it('asserts type on pipe()', () => {
+  it('asserts type on assert()', () => {
     const coder = BooleanCoder()
 
-    expect(coder.pipe(true)).to.eq(true)
-    expect(coder.pipe(false)).to.eq(false)
-    expect(() => coder.pipe(undefined as any)).to.throw(AssertionError)
-    expect(() => coder.pipe(null as any)).to.throw(AssertionError)
-    expect(() => coder.pipe(0 as any)).to.throw(AssertionError)
-    expect(() => coder.pipe('0' as any)).to.throw(AssertionError)
-    expect(() => coder.pipe([] as any)).to.throw(AssertionError)
-    expect(() => coder.pipe({} as any)).to.throw(AssertionError)
+    expect(coder.assert(true)).to.eq(true)
+    expect(coder.assert(false)).to.eq(false)
+    expect(() => coder.assert(undefined as any)).to.throw(AssertionError)
+    expect(() => coder.assert(null as any)).to.throw(AssertionError)
+    expect(() => coder.assert(0 as any)).to.throw(AssertionError)
+    expect(() => coder.assert('0' as any)).to.throw(AssertionError)
+    expect(() => coder.assert([] as any)).to.throw(AssertionError)
+    expect(() => coder.assert({} as any)).to.throw(AssertionError)
   })
   it('decodes type on decode()', () => {
     const coder = BooleanCoder()

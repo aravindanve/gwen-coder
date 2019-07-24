@@ -12,17 +12,17 @@ describe('RecordTranscoder', () => {
     RecordTranscoder(StringCoder(), ListTranscoder(NumberCoder()))
   })
 
-  it('asserts type on pipe()', async () => {
+  it('asserts type on assert()', async () => {
     const coder = RecordTranscoder(StringCoder(), NumberCoder())
 
-    await expect(coder.pipe({ 42: 42 })).eventually.deep.eq({ 42: 42 })
-    await expect(coder.pipe({ value1: 42, value2: 43 })).eventually.deep.eq({ value1: 42, value2: 43 })
-    await expect(coder.pipe({ value: '42' } as any)).to.be.rejectedWith(AssertionError)
-    await expect(coder.pipe(undefined as any)).to.be.rejectedWith(AssertionError)
-    await expect(coder.pipe(null as any)).to.be.rejectedWith(AssertionError)
-    await expect(coder.pipe(true as any)).to.be.rejectedWith(AssertionError)
-    await expect(coder.pipe('42' as any)).to.be.rejectedWith(AssertionError)
-    await expect(coder.pipe(42 as any)).to.be.rejectedWith(AssertionError)
+    await expect(coder.assert({ 42: 42 })).eventually.deep.eq({ 42: 42 })
+    await expect(coder.assert({ value1: 42, value2: 43 })).eventually.deep.eq({ value1: 42, value2: 43 })
+    await expect(coder.assert({ value: '42' } as any)).to.be.rejectedWith(AssertionError)
+    await expect(coder.assert(undefined as any)).to.be.rejectedWith(AssertionError)
+    await expect(coder.assert(null as any)).to.be.rejectedWith(AssertionError)
+    await expect(coder.assert(true as any)).to.be.rejectedWith(AssertionError)
+    await expect(coder.assert('42' as any)).to.be.rejectedWith(AssertionError)
+    await expect(coder.assert(42 as any)).to.be.rejectedWith(AssertionError)
   })
   it('decodes type on decode()', async () => {
     const coder = RecordTranscoder(StringCoder(), NumberCoder())

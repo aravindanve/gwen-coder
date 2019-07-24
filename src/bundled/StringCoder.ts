@@ -4,7 +4,7 @@ import { defaultCodingOptions } from '../defaults'
 
 /** String Coder Factory */
 export const StringCoder = (): Coder<string> => ({
-  pipe(data) {
+  assert(data) {
     if (typeof data === 'string') {
       return data
     }

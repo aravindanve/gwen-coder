@@ -8,17 +8,17 @@ describe('UnionTranscoder', () => {
   it('can be initialized', () => {
     UnionTranscoder(StringCoder(), NullCoder())
   })
-  it('asserts type on pipe()', async () => {
+  it('asserts type on assert()', async () => {
     const coder = UnionTranscoder(StringCoder(), NullCoder())
 
-    await expect(coder.pipe('hello')).to.eventually.eq('hello')
-    await expect(coder.pipe(null)).to.eventually.eq(null)
-    await expect(coder.pipe(undefined as any)).to.be.rejectedWith(AssertionError)
-    await expect(coder.pipe(true as any)).to.be.rejectedWith(AssertionError)
-    await expect(coder.pipe(false as any)).to.be.rejectedWith(AssertionError)
-    await expect(coder.pipe(42 as any)).to.be.rejectedWith(AssertionError)
-    await expect(coder.pipe([] as any)).to.be.rejectedWith(AssertionError)
-    await expect(coder.pipe({} as any)).to.be.rejectedWith(AssertionError)
+    await expect(coder.assert('hello')).to.eventually.eq('hello')
+    await expect(coder.assert(null)).to.eventually.eq(null)
+    await expect(coder.assert(undefined as any)).to.be.rejectedWith(AssertionError)
+    await expect(coder.assert(true as any)).to.be.rejectedWith(AssertionError)
+    await expect(coder.assert(false as any)).to.be.rejectedWith(AssertionError)
+    await expect(coder.assert(42 as any)).to.be.rejectedWith(AssertionError)
+    await expect(coder.assert([] as any)).to.be.rejectedWith(AssertionError)
+    await expect(coder.assert({} as any)).to.be.rejectedWith(AssertionError)
   })
   it('decodes type on decode()', async () => {
     const coder = UnionTranscoder(StringCoder(), NullCoder())

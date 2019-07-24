@@ -13,7 +13,7 @@ export function ConfiguredTranscoder<T, E>(coder: Transcoder<T, E>, codingOption
     setCodingOptions(options) {
       Object.assign(codingOptions, options)
     },
-    pipe: (data) => coder.pipe(data, codingOptions),
+    assert: (data) => coder.assert(data, codingOptions),
     decode: (data) => coder.decode(data, codingOptions),
     encode: (data) => coder.encode(data, codingOptions)
   }

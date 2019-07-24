@@ -3,7 +3,7 @@ import { AssertionError, DecodingError, EncodingError } from '../errors'
 
 /** Date-Time Transcoder Factory */
 export const DateTimeTranscoder = (): Transcoder<Date, string> => ({
-  pipe(data) {
+  assert(data) {
     if (Object.prototype.toString.call(data) === '[object Date]' && !isNaN(data.getTime())) {
       return data
     }

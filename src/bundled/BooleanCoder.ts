@@ -4,7 +4,7 @@ import { defaultCodingOptions } from '../defaults'
 
 /** Boolean Coder Factory */
 export const BooleanCoder = (): Coder<boolean> => ({
-  pipe(data) {
+  assert(data) {
     if (typeof data === 'boolean') {
       return data
     }

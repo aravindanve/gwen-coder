@@ -16,8 +16,8 @@ export function LiteralCoder<T extends LiteralType>(value: T): Coder<T> {
     typeof value === 'string' ? StringCoder() : NullCoder() as any
 
   return {
-    pipe(data, options) {
-      const result = coder.pipe(data, options)
+    assert(data, options) {
+      const result = coder.assert(data, options)
       if (result === value) {
         return result
       }

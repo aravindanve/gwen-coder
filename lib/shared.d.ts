@@ -1,14 +1,14 @@
-export declare type PipeOptions = {
-    ignoreExtraOnPipe?: boolean;
+export declare type AssertionOptions = {
+    ignoreExtraOnAssert?: boolean;
 };
 export declare type DecodingOptions = {
     coerceOnDecode?: boolean;
     coerceNullFromStringOnDecode?: boolean;
 };
 export declare type EncodingOptions = {};
-export declare type CodingOptions = PipeOptions & DecodingOptions & EncodingOptions;
+export declare type CodingOptions = AssertionOptions & DecodingOptions & EncodingOptions;
 export interface Transcoder<T, E> {
-    pipe(data: T, options?: PipeOptions): T | Promise<T>;
+    assert(data: T, options?: AssertionOptions): T | Promise<T>;
     decode(data: E, options?: DecodingOptions): T | Promise<T>;
     encode(data: T, options?: EncodingOptions): E | Promise<E>;
 }

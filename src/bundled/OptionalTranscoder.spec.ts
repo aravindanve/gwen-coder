@@ -7,16 +7,16 @@ describe('StringCoder', () => {
   it('can be initialized', () => {
     OptionalTranscoder(StringCoder())
   })
-  it('asserts type on pipe()', () => {
+  it('asserts type on assert()', () => {
     const coder = OptionalTranscoder(StringCoder())
 
-    expect(coder.pipe('hello')).to.eq('hello')
-    expect(coder.pipe(undefined)).to.eq(undefined)
-    expect(() => coder.pipe(null as any)).to.throw(AssertionError)
-    expect(() => coder.pipe(true as any)).to.throw(AssertionError)
-    expect(() => coder.pipe(42 as any)).to.throw(AssertionError)
-    expect(() => coder.pipe([] as any)).to.throw(AssertionError)
-    expect(() => coder.pipe({} as any)).to.throw(AssertionError)
+    expect(coder.assert('hello')).to.eq('hello')
+    expect(coder.assert(undefined)).to.eq(undefined)
+    expect(() => coder.assert(null as any)).to.throw(AssertionError)
+    expect(() => coder.assert(true as any)).to.throw(AssertionError)
+    expect(() => coder.assert(42 as any)).to.throw(AssertionError)
+    expect(() => coder.assert([] as any)).to.throw(AssertionError)
+    expect(() => coder.assert({} as any)).to.throw(AssertionError)
   })
   it('decodes type on decode()', () => {
     const coder = OptionalTranscoder(StringCoder())

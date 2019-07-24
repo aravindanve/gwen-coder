@@ -3,14 +3,14 @@ import { AssertionError, DecodingError, EncodingError } from '../errors'
 
 /** List Transcoder Factory */
 export const ListTranscoder = <T, E> (type: Transcoder < T, E >): Transcoder<T[], E[]> => ({
-  async pipe(data, options) {
+  async assert(data, options) {
     if (!Array.isArray(data)) {
       throw AssertionError.new(`Expected ${data} to be array`)
     }
 
     for (const [key, value] of data.entries()) {
       try {
-        await type.pipe(value, options)
+        await type.assert(value, options)
 
       } catch (err) {
         throw AssertionError.pushContext(err, { key, ref: this })

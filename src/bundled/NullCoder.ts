@@ -4,7 +4,7 @@ import { defaultCodingOptions } from '../defaults'
 
 /** Null Coder Factory */
 export const NullCoder = (): Coder<null> => ({
-  pipe(data) {
+  assert(data) {
     if (data === null) {
       return data
     }
