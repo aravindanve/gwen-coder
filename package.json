@@ -1,6 +1,6 @@
 {
   "name": "gwen-coder",
-  "version": "1.0.0-beta.3",
+  "version": "1.0.0-beta.4",
   "description": "Declarative type-safe data decoding, encoding and run-time assertions for JS",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
