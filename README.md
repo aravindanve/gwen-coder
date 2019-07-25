@@ -23,7 +23,6 @@ A transcoder is an object that represents a type. You can compose your type like
 ```ts
 import { Type } from 'gwen-coder'
 
-// compose transcoder
 const Person = Type.struct({
     name: Type.string(),
     email: Type.string(),
@@ -182,46 +181,121 @@ Commonly used types are built into the module.
 
 Common JavaScript primitives are included.
 
+__undefined__
+
 ```ts
-await Type.undefined().assert(undefined)
+const Undefined = Type.undefined()
 
-await Type.null().decode(null) === null
-await Type.null().decode('null') // throws `AssertionError`
-await Type.null().decode('null', { coerceNullFromStringOnDecode: true }) === null
+// succeeds
+const result: undefined = await Undefined.assert(undefined)
+const result: undefined = await Undefined.decode(undefined)
+const result: undefined = await Undefined.encode(undefined)
 
-await Type.boolean().decode(false) === false
-await Type.boolean().decode(1) // throws `AssertionError`
-await Type.boolean().decode('true') // throws `AssertionError`
-await Type.boolean().decode(1, { coerceOnDecode: true }) === true
-await Type.boolean().decode('true', { coerceOnDecode: true }) === true
-
-await Type.number().assert(42) === 42
-await Type.number().assert('42') // throws `AssertionError`
-await Type.number().assert('42', { coerceOnDecode: true }) === 42
-
-await Type.string().assert('hello') === 'hello'
-await Type.string().assert(42) // throws `AssertionError`
-await Type.string().assert(42, { coerceOnDecode: true }) === '42'
-
-// literals can be null, boolean, number or string
-await Type.literal('psst.').assert('psst.') === 'psst.'
-await Type.literal('psst.').assert('hello') // throws `AssertionError`
+// fails
+await Undefined.assert(42) // throws `AssertionError`
 ```
 
-There is also a special primitive type included: `integer`
+__null__
+
+```ts
+const Null = Type.null()
+
+// succeeds
+const result: null = await Null.decode(null)
+const result: null = await Null.decode('null', {
+    coerceNullFromStringOnDecode: true
+})
+
+// fails
+await Null.assert(42) // throws `AssertionError`
+await Null.decode('null') // throws `DecodingError`
+```
+
+__boolean__
+
+```ts
+const Boolean = Type.boolean()
+
+// succeeds
+const result: true = await Boolean.decode(true)
+const result: true = await Boolean.decode('true', {
+    coerceOnDecode: true
+})
+
+const result: true = await Boolean.decode(1, {
+    coerceOnDecode: true
+})
+
+// fails
+await Boolean.assert(42) // throws `AssertionError`
+```
+
+__number__
+
+```ts
+const Number = Type.number()
+
+// succeeds
+const result: number = await Number.assert(42)
+const result: number = await Number.decode(42)
+const result: number = await Number.decode('42', {
+    coerceOnDecode: true
+})
+
+// fails
+await Number.assert('42') // throws `AssertionError`
+await Number.decode('42') // throws `DecodingError`
+```
+
+__string__
+
+```ts
+const String = Type.string()
+
+// succeeds
+const result: string = await String.assert('hello')
+const result: string = await String.decode('42')
+const result: string = await String.decode(42, {
+    coerceOnDecode: true
+})
+
+// fails
+await String.assert(42) // throws `AssertionError`
+await String.decode(42) // throws `DecodingError`
+```
+
+__literal__
+
+```ts
+const Literal = Type.literal('psst.')
+
+// succeeds
+const result: 'psst.' = await Literal.assert('psst.')
+
+// fails
+await Literal.assert('hello') // throws `AssertionError`
+await Literal.decode(42) // throws `DecodingError`
+```
+
+__integer__
+
+There is also a special coder included for `integer`
 
 ```ts
 const Integer = Type.integer()
 // ^ represents `number` at compile-time
 // ^ but validates if the value is an integer at run-time
 
+// succeeds
 await Integer.assert(1) === 1
-await Integer.assert(1.5) // throws
+
+// fails
+await Integer.assert(1.5) // throws `AssertionError`
 ```
 
-### DateTime
+### Date-Time
 
-DateTime is an example of a Transcoded Type
+Date-Time is a built-in transcoded type
 
 ```ts
 const DateTime = Type.dateTime()
@@ -252,7 +326,7 @@ await MyList.assert([1, 'hello']) // throws `AssertionError`
 const MyTuple = Type.tuple(Type.number(), Type.string())
 
 // succeeds
-await MyTuple.assert([1, 'hello'])      // returns [1, 'hello']
+await MyTuple.assert([1, 'hello']) // returns [1, 'hello']
 
 // fails
 await MyTuple.assert([]) // throws `AssertionError`
@@ -345,7 +419,40 @@ await Any.assert(undefined)
 
 ## Configured Types
 
-_TODO: Add Section_
+Instead of passing assertion, decoding and encoding options on each call, you
+can configure trasncoders with default values.
+
+```ts
+const Person = Type.configured(Type.struct(
+    name: Type.string(),
+    age: Type.number()
+
+), {
+    coerceOnDecode: true
+})
+```
+
+For configured types, options passed in api calls will be ignored.
+
+```ts
+// succeeds
+await Person.decode({ name: 'G', age: 18 }) // returns { name: 'G', age: 18 }
+await Person.decode({ name: 'G', age: '18' }) // returns { name: 'G', age: 18 }
+await Person.decode({ name: 2, age: '18' }) // returns { name: '2', age: 18 }
+
+// also succeeds
+await Person.decode({ name: 2, age: '18' }, { coerceOnDecode: false })
+                                            // ^ option ignored
+```
+
+To change the options of a configured type, you can do this:
+
+```ts
+Person.setCodingOptions({ coerceOnDecode: false })
+
+// fails
+await Person.decode({ name: 2, age: '18' }) // throws `DecodingError`
+```
 
 ## Custom Types
 

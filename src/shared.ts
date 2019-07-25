@@ -32,6 +32,6 @@ export function Transcoder<T, E>(transcoder: Transcoder<T, E>): Transcoder<T, E>
   return transcoder
 }
 
-export function Coder<T, E>(coder: Coder<T>): Coder<T> {
+export function Coder<T>(coder: Coder<T>): Coder<T> {
   return coder
 }
