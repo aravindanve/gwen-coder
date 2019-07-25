@@ -147,30 +147,99 @@ type Coder<Type> = Transcoder<Type, Type>
 
 __assert(data, options?)__
 
-_TODO: Improve Section_
+Checks if data conforms to type and returns it with the appropriate compile-time type.
 
-Asserts data conforms to type.
+```ts
+Type.string().assert('hello' as any) // returns 'hello' with type `string`
+```
+__option__: ignoreExtraOnAssert
+
+This option only applies to structures and tuples, for other types, it's ignored.
+
+```ts
+// succeeds
+await Type
+    .struct({ name: Type.string() })
+    .assert({ name: 'a', age: 1 }, { ignoreExtraOnAssert :true })
+
+// fails
+await Type
+    .struct({ name: Type.string() })
+    .assert({ name: 'a', age: 1 }) // throws `AssertionError`
+```
 
 __decode(data, options?)__
 
-_TODO: Improve Section_
+Decodes from json encoded type.
 
-Decodes from json encoded type
+```ts
+// the following returns a Date instance
+await Type.dateTime().decode('2019-07-24T17:25:48.443Z')
+```
+
+__option__: coerceOnDecode
+
+Attempts to coerce the value from a value of another type
+
+```ts
+'0' === await Type.string().decode(0 as any, { coerceOnDecode: true })
+'1' === await Type.string().decode(1 as any, { coerceOnDecode: true })
+
+false === await Type.boolean().decode(0 as any, { coerceOnDecode: true })
+true === await Type.boolean().decode(1 as any, { coerceOnDecode: true })
+```
+
+__option__: coerceNullFromStringOnDecode
+
+Attempts to coerce null from string.
+
+```ts
+null === await Type.string().decode('null', { coerceNullFromStringOnDecode: true })
+null === await Type.string().decode('NULL', { coerceNullFromStringOnDecode: true })
+```
 
 __encode(data, options?)__
 
-_TODO: Improve Section_
+Encodes to json encoded type.
 
-Encodes to json encoded type
+```ts
+// the following returns '2019-07-24T17:25:48.443Z'
+await  Type.dateTime().encode(new Date())
+```
 
 ### Default Coding Options
 
-_TODO: Add Section_
+To set the global defaults for assertions, decoding and encoding, you can use:
+
+```ts
+Type.setDefaultCodingOptions({
+    ignoreExtraOnAssert: false, // default
+    coerceOnDecode: true,
+    coerceNullFromStringOnDecode: false // default
+})
+```
 
 
 ## Errors
 
-_TODO: Add Section_
+__TranscoderError__
+
+Base error for all errors thrown. Includes `trace` and `path` information.
+
+```ts
+interface TranscoderError {
+    readonly path: string   // json-pointer to origin of the error
+    readonly trace: Array<{
+        key: string | number
+        ref: Transcoder<any, any>
+    }>
+}
+```
+
+* __AssertionError__ is thrown by `assert(data, options?)`
+* __DecodingError__ is thrown by `decode(data, options?)`
+* __EncodingError__ is thrown by `encode(data, options?)`
+
 
 
 ## Built-In Types
