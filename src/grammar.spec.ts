@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 import { Type } from './grammar'
 import { NullCoder, ConfiguredTranscoder, UndefinedCoder, BooleanCoder, NumberCoder, StringCoder, ListTranscoder, StructureTranscoder, UnionTranscoder, OptionalTranscoder, NullableTranscoder, AnyCoder, LiteralCoder, IntegerCoder, DateTimeTranscoder, RecordTranscoder, TupleTranscoder } from './bundled'
-import { defaultCodingOptions } from './defaults'
+import { defaultCodingOptions } from './shared'
 
 describe('Type', () => {
   it('exposes factories', () => {

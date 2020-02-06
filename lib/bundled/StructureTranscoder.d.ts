@@ -11,4 +11,4 @@ export declare type StructureTranscoder<P> = Transcoder<Structure<{
 }>, Structure<{
     [K in keyof P]: P[K] extends Transcoder<any, infer E> ? E : never;
 }>>;
-export declare function StructureTranscoder<P extends PropertyTranscoders>(properties: P): StructureTranscoder<P>;
+export declare function StructureTranscoder<P extends PropertyTranscoders>(props: P): StructureTranscoder<P>;

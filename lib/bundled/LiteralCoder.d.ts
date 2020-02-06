@@ -1,3 +1,2 @@
-import { Coder } from '../shared';
 export declare type LiteralType = null | boolean | number | string;
-export declare function LiteralCoder<T extends LiteralType>(value: T): Coder<T>;
+export declare const LiteralCoder: <T extends LiteralType>(literal: T) => import("../shared").Transcoder<T, T>;

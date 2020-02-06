@@ -11,12 +11,12 @@ export declare const Type: {
     list: <T, E>(type: import("./shared").Transcoder<T, E>) => import("./shared").Transcoder<T[], E[]>;
     struct: typeof bundled.StructureTranscoder;
     anyOf: typeof bundled.UnionTranscoder;
-    optional: typeof bundled.OptionalTranscoder;
-    nullable: typeof bundled.NullableTranscoder;
+    optional: <T, E>(type: import("./shared").Transcoder<T, E>) => import("./shared").Transcoder<T | undefined, E | undefined>;
+    nullable: <T, E>(type: import("./shared").Transcoder<T, E>) => import("./shared").Transcoder<T | null, E | null>;
     any: () => import("./shared").Transcoder<any, any>;
-    literal: typeof bundled.LiteralCoder;
-    integer: typeof bundled.IntegerCoder;
+    literal: <T extends bundled.LiteralType>(literal: T) => import("./shared").Transcoder<T, T>;
+    integer: () => import("./shared").Transcoder<number, number>;
     dateTime: () => import("./shared").Transcoder<Date, string>;
-    record: <K extends string, T, E>(key: import("./shared").Transcoder<K, K>, value: import("./shared").Transcoder<T, E>) => import("./shared").Transcoder<bundled.Record<K, T>, bundled.Record<K, E>>;
+    record: <K extends string, T, E>(keyType: import("./shared").Transcoder<K, K>, valueType: import("./shared").Transcoder<T, E>) => import("./shared").Transcoder<bundled.Record<K, T>, bundled.Record<K, E>>;
     tuple: typeof bundled.TupleTranscoder;
 };

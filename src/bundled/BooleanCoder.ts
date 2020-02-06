@@ -1,42 +1,43 @@
-import { Coder } from '../shared'
+import { Coder, defaultCodingOptions } from '../shared'
 import { AssertionError, DecodingError, EncodingError } from '../errors'
-import { defaultCodingOptions } from '../defaults'
 
-/** Boolean Coder Factory */
+const tag = 'BooleanCoder'
+const typeDescription = 'boolean'
+
+/** Boolean coder factory */
 export const BooleanCoder = (): Coder<boolean> => ({
-  assert(data) {
-    if (typeof data === 'boolean') {
-      return data
-    }
-
-    throw AssertionError.new(`Expected ${data} to be boolean`)
+  tag,
+  typeDescription,
+  encodedTypeDescription: typeDescription,
+  assert(value) {
+    return typeof value === 'boolean'
+      ? Promise.resolve(value)
+      : Promise.reject(new AssertionError({ tag, value, expected: typeDescription }))
   },
-  decode(data, options) {
-    if (typeof data === 'boolean') {
-      return data
+  decode(value, options) {
+    if (typeof value === 'boolean') {
+      return Promise.resolve(value)
     }
     if (options ? options.coerceOnDecode : defaultCodingOptions.coerceOnDecode) {
-      switch (typeof data) {
+      switch (typeof value) {
         case 'number':
-          if (data === 0) return false
-          if (data === 1) return true
+          if (value === 0) return Promise.resolve(false)
+          if (value === 1) return Promise.resolve(true)
           break
 
         case 'string':
-          const string = (data as string).toLowerCase()
-          if (string === '0' || string === 'false') return false
-          if (string === '1' || string === 'true') return true
+          const string = (value as string).toLowerCase()
+          if (string === '0' || string === 'false') return Promise.resolve(false)
+          if (string === '1' || string === 'true') return Promise.resolve(true)
           break
       }
     }
 
-    throw DecodingError.new(`Could not decode data ${data} as boolean`)
+    return Promise.reject(new DecodingError({ tag, value, expected: typeDescription }))
   },
-  encode(data) {
-    if (typeof data === 'boolean') {
-      return data
-    }
-
-    throw EncodingError.new(`Could not encode data ${data} to boolean`)
+  encode(value) {
+    return typeof value === 'boolean'
+      ? Promise.resolve(value)
+      : Promise.reject(new EncodingError({ tag, value, expected: typeDescription }))
   }
 })

@@ -1,6 +1,8 @@
 import { Coder, Transcoder } from '../shared'
 import { AssertionError, DecodingError, EncodingError } from '../errors'
 
+const tag = 'RecordTranscoder'
+
 /** Specialized record key type */
 export type RecordKeyType = string
 
@@ -9,57 +11,53 @@ export type Record<K, V> =
   K extends string ? { [key: string]: V } :
   never
 
-/** Record Coder Factory */
-export const RecordTranscoder = <K extends RecordKeyType, T, E>(key: Coder<K>, value: Transcoder<T, E>): Transcoder<Record<K, T>, Record<K, E>> => ({
-  async assert(data, options) {
-    if (typeof data !== 'object' || data === null) {
-      throw AssertionError.new(`Expected ${data} to be object`)
-    }
+/** Record transcoder factory */
+export const RecordTranscoder = <K extends RecordKeyType, T, E>(keyType: Coder<K>, valueType: Transcoder<T, E>): Transcoder<Record<K, T>, Record<K, E>> => {
+  const typeDescription = `{ [key: ${keyType.typeDescription}]: ${valueType.typeDescription} }`
+  const encodedTypeDescription = `{ [key: ${keyType.encodedTypeDescription}]: ${valueType.encodedTypeDescription} }`
 
-    for (const [_key, _value] of Object.entries(data)) {
-      try {
-        await key.assert(_key as any, options)
-        await value.assert(_value, options)
-
-      } catch (err) {
-        throw AssertionError.pushContext(err, { key: _key, ref: this })
+  return {
+    tag,
+    typeDescription,
+    encodedTypeDescription,
+    assert(value, options) {
+      if (value === null || typeof value !== 'object') {
+        return Promise.reject(new AssertionError({ tag, value, expected: typeDescription }))
       }
-    }
 
-    return data
-  },
-  async decode(data, options) {
-    if (typeof data !== 'object' || data === null) {
-      throw DecodingError.new(`Could not decode data ${data} as structure`)
-    }
+      const keys = Object.keys(value)
+      const kPromises = Promise.all(keys.map(key => keyType.assert(key as any, options)))
+      const vPromises = Promise.all(keys.map(key => valueType.assert(value[key], options)))
 
-    const result = {} as any
-    for (const [_key, _value] of Object.entries(data)) {
-      try {
-        result[await key.decode(_key as any, options)] = await value.decode(_value, options)
-
-      } catch (err) {
-        throw DecodingError.pushContext(err, { key: _key, ref: this })
+      return Promise.all([kPromises, vPromises])
+        .then(() => value)
+        .catch(err => Promise.reject(AssertionError.pushContext(err, { tag, expected: typeDescription })))
+    },
+    decode(value, options) {
+      if (value === null || typeof value !== 'object') {
+        return Promise.reject(new DecodingError({ tag, value, expected: typeDescription }))
       }
-    }
 
-    return result as any
-  },
-  async encode(data, options) {
-    if (typeof data !== 'object' || data === null) {
-      throw EncodingError.new(`Could not encode data ${data} to structure`)
-    }
+      const keys = Object.keys(value)
+      const kPromises = Promise.all(keys.map(key => keyType.decode(key as any, options)))
+      const vPromises = Promise.all(keys.map(key => valueType.decode(value[key], options)))
 
-    const result = {} as any
-    for (const [_key, _value] of Object.entries(data)) {
-      try {
-        result[await key.encode(_key as any, options)] = await value.encode(_value, options)
-
-      } catch (err) {
-        throw EncodingError.pushContext(err, { key: _key, ref: this })
+      return Promise.all([kPromises, vPromises])
+        .then(([keys, values]) => keys.reduce((acc, key, i) => (acc[key] = values[i], acc), {} as any))
+        .catch(err => Promise.reject(DecodingError.pushContext(err, { tag, expected: typeDescription })))
+    },
+    encode(value, options) {
+      if (value === null || typeof value !== 'object') {
+        return Promise.reject(new EncodingError({ tag, value, expected: typeDescription }))
       }
-    }
 
-    return result as any
+      const keys = Object.keys(value)
+      const kPromises = Promise.all(keys.map(key => keyType.encode(key as any, options)))
+      const vPromises = Promise.all(keys.map(key => valueType.encode(value[key], options)))
+
+      return Promise.all([kPromises, vPromises])
+        .then(([keys, values]) => keys.reduce((acc, key, i) => (acc[key] = values[i], acc), {} as any))
+        .catch(err => Promise.reject(EncodingError.pushContext(err, { tag, expected: typeDescription })))
+    }
   }
-})
+}

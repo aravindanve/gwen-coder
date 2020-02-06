@@ -1,6 +1,5 @@
 import * as bundled from './bundled'
-import { CodingOptions } from './shared'
-import { defaultCodingOptions } from './defaults'
+import { CodingOptions, defaultCodingOptions } from './shared'
 
 export const Type = {
   setDefaultCodingOptions(options: CodingOptions) {

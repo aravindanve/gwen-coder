@@ -1,33 +1,35 @@
-import { Coder } from '../shared'
+import { Coder, defaultCodingOptions } from '../shared'
 import { AssertionError, DecodingError, EncodingError } from '../errors'
-import { defaultCodingOptions } from '../defaults'
 
-/** Null Coder Factory */
+const tag = 'NullCoder'
+const typeDescription = 'null'
+
+/** Null coder factory */
 export const NullCoder = (): Coder<null> => ({
-  assert(data) {
-    if (data === null) {
-      return data
-    }
-
-    throw AssertionError.new(`Expected ${data} to be null`)
+  tag,
+  typeDescription,
+  encodedTypeDescription: typeDescription,
+  assert(value) {
+    return value === null
+      ? Promise.resolve(value)
+      : Promise.reject(new AssertionError({ tag, value, expected: typeDescription }))
   },
-  decode(data, options) {
-    if (data === null) {
-      return data
-    }
-    if (options ? options.coerceNullFromStringOnDecode : defaultCodingOptions.coerceNullFromStringOnDecode) {
-      if (typeof data === 'string' && (data as unknown as string).toLowerCase() === 'null') {
-        return null
-      }
+  decode(value, options) {
+    if (value === null) {
+      return Promise.resolve(value)
     }
 
-    throw DecodingError.new(`Could not decode data ${data} as null`)
+    const coerce = options
+      ? options.coerceNullFromStringOnDecode
+      : defaultCodingOptions.coerceNullFromStringOnDecode
+
+    return coerce && typeof value === 'string' && (value as unknown as string).toLowerCase() === 'null'
+      ? Promise.resolve(null)
+      : Promise.reject(new DecodingError({ tag, value, expected: typeDescription }))
   },
-  encode(data) {
-    if (data === null) {
-      return data
-    }
-
-    throw EncodingError.new(`Could not encode data ${data} to null`)
+  encode(value) {
+    return value === null
+      ? Promise.resolve(value)
+      : Promise.reject(new EncodingError({ tag, value, expected: typeDescription }))
   }
 })

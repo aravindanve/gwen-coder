@@ -11,9 +11,12 @@ export type EncodingOptions = {}
 export type CodingOptions = AssertionOptions & DecodingOptions & EncodingOptions
 
 export interface Transcoder<T, E> {
-  assert(data: T, options?: AssertionOptions): T | Promise<T>
-  decode(data: E, options?: DecodingOptions): T | Promise<T>
-  encode(data: T, options?: EncodingOptions): E | Promise<E>
+  readonly tag: string
+  readonly typeDescription: string
+  readonly encodedTypeDescription: string
+  assert(data: T, options?: AssertionOptions): Promise<T>
+  decode(data: E, options?: DecodingOptions): Promise<T>
+  encode(data: T, options?: EncodingOptions): Promise<E>
 }
 
 export type Coder<T> = Transcoder<T, T>
@@ -28,10 +31,8 @@ export type EncodedType<C> =
   C extends Transcoder<any, infer E2> ? E2 :
   never
 
-export function Transcoder<T, E>(transcoder: Transcoder<T, E>): Transcoder<T, E> {
-  return transcoder
-}
-
-export function Coder<T>(coder: Coder<T>): Coder<T> {
-  return coder
+export const defaultCodingOptions: CodingOptions = {
+  ignoreExtraOnAssert: false,
+  coerceOnDecode: false,
+  coerceNullFromStringOnDecode: false
 }

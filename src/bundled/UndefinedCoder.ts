@@ -1,27 +1,27 @@
 import { Coder } from '../shared'
 import { AssertionError, DecodingError, EncodingError } from '../errors'
 
-/** Undefined Coder Factory */
+const tag = 'UndefinedCoder'
+const typeDescription = 'undefined'
+
+/** Undefined coder factory */
 export const UndefinedCoder = (): Coder<undefined> => ({
-  assert(data) {
-    if (data === undefined) {
-      return data
-    }
-
-    throw AssertionError.new(`Expected ${data} to be undefined`)
+  tag,
+  typeDescription,
+  encodedTypeDescription: typeDescription,
+  assert(value) {
+    return value === undefined
+      ? Promise.resolve(value)
+      : Promise.reject(new AssertionError({ tag, value, expected: typeDescription }))
   },
-  decode(data) {
-    if (data === undefined) {
-      return data
-    }
-
-    throw DecodingError.new(`Could not decode data ${data} as undefined`)
+  decode(value) {
+    return value === undefined
+      ? Promise.resolve(value)
+      : Promise.reject(new DecodingError({ tag, value, expected: typeDescription }))
   },
-  encode(data) {
-    if (data === undefined) {
-      return data
-    }
-
-    throw EncodingError.new(`Could not encode data ${data} to undefined`)
+  encode(value) {
+    return value === undefined
+      ? Promise.resolve(value)
+      : Promise.reject(new EncodingError({ tag, value, expected: typeDescription }))
   }
 })

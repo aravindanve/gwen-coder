@@ -7,6 +7,7 @@ import { NullCoder } from './NullCoder'
 describe('UnionTranscoder', () => {
   it('can be initialized', () => {
     UnionTranscoder(StringCoder(), NullCoder())
+    expect(() => (UnionTranscoder as any)()).to.throw(TypeError)
   })
   it('asserts type on assert()', async () => {
     const coder = UnionTranscoder(StringCoder(), NullCoder())

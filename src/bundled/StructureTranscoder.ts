@@ -1,6 +1,7 @@
-import { Transcoder } from '../shared'
+import { Transcoder, defaultCodingOptions } from '../shared'
 import { AssertionError, DecodingError, EncodingError } from '../errors'
-import { defaultCodingOptions } from '../defaults'
+
+const tag = 'StructureTranscoder'
 
 /** String-keyed map of property transcoders */
 export type PropertyTranscoders = {
@@ -16,80 +17,50 @@ export type StructureTranscoder<P> = Transcoder<
   Structure<{ [K in keyof P]: P[K] extends Transcoder<infer T, any> ? T : never }>,
   Structure<{ [K in keyof P]: P[K] extends Transcoder<any, infer E> ? E : never }>>
 
-// NOTE: additional properties are difficult to implement because it's unclear how to
-// express the type for the additional properties. For example, this is not yet supported:
-// ```ts
-// interface Example {
-//   [letter: 'a' | 'b' | 'c']: number;
-//   [rest: ...any]: string;
-// }
-// ```
-// see:
-// https://github.com/Microsoft/TypeScript/issues/7765
-
-/** Structure Transcoder Factory */
-export function StructureTranscoder<P extends PropertyTranscoders>(properties: P): StructureTranscoder<P> {
-  const knownKeys = Object.keys(properties)
+/** Structure transcoder factory */
+export function StructureTranscoder<P extends PropertyTranscoders>(props: P): StructureTranscoder<P> {
+  const knownKeys = Object.keys(props)
   const knownKeysMap = knownKeys.reduce((acc, key) => (acc[key] = true, acc), Object.create(null))
-  const knownEntries = Object.entries(properties)
+  const typeDescription = `{ ${knownKeys.reduce((acc, key) => (acc.push(`${key}: ${props[key].typeDescription}`), acc), [] as string[]).join(', ')} }`
+  const encodedTypeDescription = `{ ${knownKeys.reduce((acc, key) => (acc.push(`${key}: ${props[key].encodedTypeDescription}`), acc), [] as string[]).join(', ')} }`
 
   return {
-    async assert(data, options) {
-      if (typeof data !== 'object' || data === null) {
-        throw AssertionError.new(`Expected ${data} to be object`)
+    tag,
+    typeDescription,
+    encodedTypeDescription,
+    assert(value, options) {
+      if (value === null || typeof value !== 'object') {
+        return Promise.reject(new AssertionError({ tag, value, expected: typeDescription }))
       }
 
       if (!(options ? options.ignoreExtraOnAssert : defaultCodingOptions.ignoreExtraOnAssert)) {
-        const extraKeys = Object.keys(data).filter(key => !knownKeysMap[key])
-        if (extraKeys.length) {
-          throw AssertionError.new(`Found unknown keys ${extraKeys} in structure`)
+        const extra = Object.keys(value).find(key => !knownKeysMap[key])
+        if (extra) {
+          return Promise.reject(new AssertionError({ tag, value, expected: typeDescription }, `Found unknown key ${extra} in structure`))
         }
       }
 
-      for (const [key, type] of knownEntries) {
-        try {
-          await type.assert(data[key], options)
-
-        } catch (err) {
-          throw AssertionError.pushContext(err, { key, ref: this })
-        }
-      }
-
-      return data
+      return Promise.all(knownKeys.map(key => props[key].assert(value[key], options)))
+        .then(() => value)
+        .catch(err => Promise.reject(AssertionError.pushContext(err, { tag, expected: typeDescription })))
     },
-    async decode(data, options) {
-      if (typeof data !== 'object' || data === null) {
-        throw DecodingError.new(`Could not decode data ${data} as structure`)
+    decode(value, options) {
+      if (value === null || typeof value !== 'object') {
+        return Promise.reject(new DecodingError({ tag, value, expected: typeDescription }))
       }
 
-      const result = {}
-      for (const [key, type] of knownEntries) {
-        try {
-          result[key] = await type.decode(data[key], options)
-
-        } catch (err) {
-          throw DecodingError.pushContext(err, { key, ref: this })
-        }
-      }
-
-      return result as any
+      return Promise.all(knownKeys.map(key => props[key].decode(value[key], options)))
+        .then(values => values.reduce((acc: any, value, i) => (acc[knownKeys[i]] = value, acc), {}) as any)
+        .catch(err => Promise.reject(DecodingError.pushContext(err, { tag, expected: typeDescription })))
     },
-    async encode(data, options) {
-      if (typeof data !== 'object' || data === null) {
-        throw EncodingError.new(`Could not encode data ${data} to structure`)
+    encode(value, options) {
+      if (value === null || typeof value !== 'object') {
+        return Promise.reject(new EncodingError({ tag, value, expected: typeDescription }))
       }
 
-      const result = {}
-      for (const [key, type] of knownEntries) {
-        try {
-          result[key] = await type.encode(data[key], options)
-
-        } catch (err) {
-          throw EncodingError.pushContext(err, { key, ref: this })
-        }
-      }
-
-      return result as any
+      return Promise.all(knownKeys.map(key => props[key].encode(value[key], options)))
+        .then(values => values.reduce((acc: any, value, i) => (acc[knownKeys[i]] = value, acc), {}) as any)
+        .catch(err => Promise.reject(EncodingError.pushContext(err, { tag, expected: typeDescription })))
     }
   }
 }
