@@ -1,40 +1,39 @@
-import { Coder } from '../shared'
+import { Coder, defaultCodingOptions } from '../shared'
 import { AssertionError, DecodingError, EncodingError } from '../errors'
-import { defaultCodingOptions } from '../defaults'
 
-/** Number Coder Factory */
+const tag = 'NumberCoder'
+const typeDescription = 'number'
+
+/** Number coder factory */
 export const NumberCoder = (): Coder<number> => ({
-  assert(data) {
-    if (typeof data === 'number' && !isNaN(data)) {
-      return data
-    }
-
-    throw AssertionError.new(`Expected ${data} to be number`)
+  tag,
+  typeDescription,
+  encodedTypeDescription: typeDescription,
+  assert(value) {
+    return typeof value === 'number' && !isNaN(value)
+      ? Promise.resolve(value)
+      : Promise.reject(new AssertionError({ tag, value, expected: typeDescription }))
   },
-  decode(data, options) {
-    if (typeof data === 'number' && !isNaN(data)) {
-      return data
+  decode(value, options) {
+    if (typeof value === 'number' && !isNaN(value)) {
+      return Promise.resolve(value)
     }
     if (options ? options.coerceOnDecode : defaultCodingOptions.coerceOnDecode) {
-      switch (typeof data) {
+      switch (typeof value) {
         case 'boolean':
-          return data ? 1 : 0
+          return Promise.resolve(value ? 1 : 0)
 
         case 'string':
-          if (!isNaN(+data)) {
-            return +data
-          }
+          if (!isNaN(+value)) return Promise.resolve(+value)
           break
       }
     }
 
-    throw DecodingError.new(`Could not decode data ${data} as number`)
+    return Promise.reject(new DecodingError({ tag, value, expected: typeDescription }))
   },
-  encode(data) {
-    if (typeof data === 'number' && !isNaN(data)) {
-      return data
-    }
-
-    throw EncodingError.new(`Could not encode data ${data} to number`)
+  encode(value) {
+    return typeof value === 'number' && !isNaN(value)
+      ? Promise.resolve(value)
+      : Promise.reject(new EncodingError({ tag, value, expected: typeDescription }))
   }
 })

@@ -1,35 +1,29 @@
-import { Transcoder } from './shared'
+export type TranscoderContext = {
+  readonly tag: string
+  readonly expected: string
+  readonly key?: string | number
+}
 
-export type TranscoderErrorContext = {
-  key: string | number
-  ref: Transcoder<any, any>
+export type TranscoderErrorOrigin = TranscoderContext & {
+  readonly value: any
 }
 
 export class TranscoderError extends Error {
-  readonly trace: TranscoderErrorContext[] = []
+  readonly value: any
+  readonly trace: TranscoderContext[]
 
-  protected constructor(ctx?: TranscoderErrorContext, message?: string) {
-    super(message)
-    ctx && this.trace.push(ctx)
-  }
-
-  // FIXME: escape characters / and ~ in json pointer
   get path() {
-    return '#/' + this.trace.map(ctx => ctx.key).reverse().join('/')
+    return this.trace.reduceRight((acc, ctx) => (
+      ctx.key !== undefined && acc.push('' + ctx.key), acc), ['#']).join('/')
   }
 
-  static new(message?: string, ctx?: TranscoderErrorContext) {
-    return new this(ctx, message)
+  constructor(ctx: TranscoderErrorOrigin, message?: string) {
+    super(message)
+    this.trace = [{ tag: ctx.tag, key: ctx.key, expected: ctx.expected }]
+    this.value = ctx.value
   }
 
-  static pushContext(error: any, ctx: TranscoderErrorContext) {
-    if (!(error instanceof TranscoderError)) {
-      error = this.new(error && error.toString(), ctx)
-
-    } else {
-      error.trace.push(ctx)
-    }
-
-    return error as TranscoderError
+  static pushContext(err: TranscoderError, ctx: TranscoderContext) {
+    return (err.trace.push(ctx), err)
   }
 }

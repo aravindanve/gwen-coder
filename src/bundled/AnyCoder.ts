@@ -1,8 +1,14 @@
 import { Coder } from '../shared'
 
-/** Any Coder Factory */
+const tag = 'AnyCoder'
+const typeDescription = 'any'
+
+/** Any coder factory */
 export const AnyCoder = (): Coder<any> => ({
-  assert: data => data,
-  decode: data => data,
-  encode: data => data
+  tag,
+  typeDescription,
+  encodedTypeDescription: typeDescription,
+  assert: value => Promise.resolve(value),
+  decode: value => Promise.resolve(value),
+  encode: value => Promise.resolve(value)
 })

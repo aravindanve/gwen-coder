@@ -1,12 +1,15 @@
-import { Transcoder } from './shared';
-export declare type TranscoderErrorContext = {
-    key: string | number;
-    ref: Transcoder<any, any>;
+export declare type TranscoderContext = {
+    readonly tag: string;
+    readonly expected: string;
+    readonly key?: string | number;
+};
+export declare type TranscoderErrorOrigin = TranscoderContext & {
+    readonly value: any;
 };
 export declare class TranscoderError extends Error {
-    readonly trace: TranscoderErrorContext[];
-    protected constructor(ctx?: TranscoderErrorContext, message?: string);
+    readonly value: any;
+    readonly trace: TranscoderContext[];
     readonly path: string;
-    static new(message?: string, ctx?: TranscoderErrorContext): TranscoderError;
-    static pushContext(error: any, ctx: TranscoderErrorContext): TranscoderError;
+    constructor(ctx: TranscoderErrorOrigin, message?: string);
+    static pushContext(err: TranscoderError, ctx: TranscoderContext): TranscoderError;
 }

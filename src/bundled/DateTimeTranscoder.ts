@@ -1,36 +1,34 @@
 import { Transcoder } from '../shared'
 import { AssertionError, DecodingError, EncodingError } from '../errors'
 
-/** Date-Time Transcoder Factory */
-export const DateTimeTranscoder = (): Transcoder<Date, string> => ({
-  assert(data) {
-    if (Object.prototype.toString.call(data) === '[object Date]' && !isNaN(data.getTime())) {
-      return data
-    }
+const tag = 'DateTimeTranscoder'
+const typeDescription = 'Date'
+const encodedTypeDescription = 'string (date-time)'
 
-    throw AssertionError.new(`Expected ${data} to be Date`)
+/** Date-Time transcoder factory */
+export const DateTimeTranscoder = (): Transcoder<Date, string> => ({
+  tag,
+  typeDescription,
+  encodedTypeDescription,
+  assert(value) {
+    return Object.prototype.toString.call(value) === '[object Date]' && !isNaN(value.getTime())
+      ? Promise.resolve(value)
+      : Promise.reject(new AssertionError({ tag, value, expected: typeDescription }))
   },
-  decode(data) {
-    if (typeof data === 'string') {
-      const date = new Date(data)
+  decode(value) {
+    if (typeof value === 'string') {
+      const date = new Date(value)
 
       if (!isNaN(date.getTime())) {
-        return date
+        return Promise.resolve(date)
       }
     }
 
-    throw DecodingError.new(`Could not decode data ${data} as Date`)
+    return Promise.reject(new DecodingError({ tag, value, expected: typeDescription }))
   },
-  encode(data) {
-    if (Object.prototype.toString.call(data) === '[object Date]') {
-      try {
-        return data.toISOString()
-
-      } catch {
-        // do nothing
-      }
-    }
-
-    throw EncodingError.new(`Could not encode data ${data} to date-time string`)
+  encode(value) {
+    return Object.prototype.toString.call(value) === '[object Date]' && !isNaN(value.getTime())
+      ? Promise.resolve(value.toISOString())
+      : Promise.reject(new EncodingError({ tag, value, expected: encodedTypeDescription }))
   }
 })

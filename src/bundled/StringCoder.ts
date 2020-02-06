@@ -1,35 +1,36 @@
-import { Coder } from '../shared'
+import { Coder, defaultCodingOptions } from '../shared'
 import { AssertionError, DecodingError, EncodingError } from '../errors'
-import { defaultCodingOptions } from '../defaults'
 
-/** String Coder Factory */
+const tag = 'StringCoder'
+const typeDescription = 'string'
+
+/** String coder factory */
 export const StringCoder = (): Coder<string> => ({
-  assert(data) {
-    if (typeof data === 'string') {
-      return data
-    }
-
-    throw AssertionError.new(`Expected ${data} to be string`)
+  tag,
+  typeDescription,
+  encodedTypeDescription: typeDescription,
+  assert(value) {
+    return typeof value === 'string'
+      ? Promise.resolve(value)
+      : Promise.reject(new AssertionError({ tag, value, expected: typeDescription }))
   },
-  decode(data, options) {
-    if (typeof data === 'string') {
-      return data
+  decode(value, options) {
+    if (typeof value === 'string') {
+      return Promise.resolve(value)
     }
     if (options ? options.coerceOnDecode : defaultCodingOptions.coerceOnDecode) {
-      switch (typeof data) {
+      switch (typeof value) {
         case 'number':
         case 'boolean':
-          return '' + data
+          return Promise.resolve('' + value)
       }
     }
 
-    throw DecodingError.new(`Could not decode data ${data} as string`)
+    return Promise.reject(new DecodingError({ tag, value, expected: typeDescription }))
   },
-  encode(data) {
-    if (typeof data === 'string') {
-      return data
-    }
-
-    throw EncodingError.new(`Could not encode data ${data} to string`)
+  encode(value) {
+    return typeof value === 'string'
+      ? Promise.resolve(value)
+      : Promise.reject(new EncodingError({ tag, value, expected: typeDescription }))
   }
 })

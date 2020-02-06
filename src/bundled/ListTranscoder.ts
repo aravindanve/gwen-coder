@@ -1,58 +1,35 @@
 import { Transcoder } from '../shared'
 import { AssertionError, DecodingError, EncodingError } from '../errors'
 
-/** List Transcoder Factory */
-export const ListTranscoder = <T, E> (type: Transcoder < T, E >): Transcoder<T[], E[]> => ({
-  async assert(data, options) {
-    if (!Array.isArray(data)) {
-      throw AssertionError.new(`Expected ${data} to be array`)
+const tag = 'ListTranscoder'
+
+/** List transcoder factory */
+export const ListTranscoder = <T, E>(type: Transcoder < T, E >): Transcoder<T[], E[]> => {
+  const typeDescription = `Array<${type.typeDescription}>`
+  const encodedTypeDescription = `Array<${type.encodedTypeDescription}>`
+
+  return {
+    tag,
+    typeDescription,
+    encodedTypeDescription,
+    assert(value, options) {
+      return !Array.isArray(value)
+        ? Promise.reject(new AssertionError({ tag, value, expected: typeDescription }))
+        : Promise.all(value.map((_value, i) => type.assert(_value, options)
+            .catch(err => Promise.reject(AssertionError.pushContext(err, { tag, key: i, expected: typeDescription })))))
+            .then(() => value)
+    },
+    decode(value, options) {
+      return !Array.isArray(value)
+        ? Promise.reject(new DecodingError({ tag, value, expected: typeDescription }))
+        : Promise.all(value.map((_value, i) => type.decode(_value, options)
+            .catch(err => Promise.reject(DecodingError.pushContext(err, { tag, key: i, expected: typeDescription })))))
+    },
+    encode(value, options) {
+      return !Array.isArray(value)
+        ? Promise.reject(new EncodingError({ tag, value, expected: encodedTypeDescription }))
+        : Promise.all(value.map((_value, i) => type.encode(_value, options)
+          .catch(err => Promise.reject(EncodingError.pushContext(err, { tag, key: i, expected: encodedTypeDescription })))))
     }
-
-    for (const [key, value] of data.entries()) {
-      try {
-        await type.assert(value, options)
-
-      } catch (err) {
-        throw AssertionError.pushContext(err, { key, ref: this })
-      }
-    }
-
-    return data
-  },
-  async decode(data, options) {
-    if (!Array.isArray(data)) {
-      throw DecodingError.new(`Could not decode data ${data} as array`)
-    }
-
-    const result = []
-
-    for (const [key, value] of data.entries()) {
-      try {
-        result.push(await type.decode(value, options))
-
-      } catch (err) {
-        throw DecodingError.pushContext(err, { key, ref: this })
-      }
-    }
-
-    return result
-  },
-  async encode(data, options) {
-    if (!Array.isArray(data)) {
-      throw EncodingError.new(`Could not encode data ${data} to array`)
-    }
-
-    const result = []
-
-    for (const [key, value] of data.entries()) {
-      try {
-        result.push(await type.encode(value, options))
-
-      } catch (err) {
-        throw EncodingError.pushContext(err, { key, ref: this })
-      }
-    }
-
-    return result
   }
-})
+}
